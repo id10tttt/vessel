@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ir_attachment_oss</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="11"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div
+                        class="app_settings_block"
+                        data-string="OSS Storage"
+                        data-key="ir_attachment_oss"
+                        groups="base.group_system"
+                >
+                    <h2>OSS Attachment Storage</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-xs-12 col-md-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <div class="content-group">
+                                    <label for="enable_oss"
+                                           string="Enable oss"
+                                           class="col-xs-6 col-md-6 o_light_label"
+                                    />
+                                    <field name="enable_oss" class="oe_inline"/>
+                                </div>
+
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="oss_bucket"
+                                               string="OSS bucket name"
+                                               class="col-xs-6 col-md-6 o_light_label"
+                                        />
+                                        <field name="oss_bucket" class="oe_inline"/>
+                                    </div>
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="oss_access_key_id"
+                                               string="OSS access key id"
+                                               class="col-xs-6 col-md-6 o_light_label"
+                                        />
+                                        <field name="oss_access_key_id"
+                                               class="oe_inline"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="oss_secret_key"
+                                               string="OSS secret key"
+                                               class="col-xs-6 col-md-6 o_light_label"
+                                        />
+                                        <field name="oss_secret_key"
+                                               class="oe_inline"
+                                               password="True"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="oss_endpoint_url"
+                                               string="OSS ENDPOINT"
+                                               class="col-xs-6 col-md-6 o_light_label"
+                                        />
+                                        <field name="oss_endpoint_url" class="oe_inline"/>
+                                    </div>
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="oss_condition"
+                                               string="OSS condition"
+                                               class="col-xs-6 col-md-6 o_light_label"
+                                        />
+                                        <field name="oss_condition" class="oe_inline"/>
+                                    </div>
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="oss_folder_root"
+                                               string="OSS folder root"
+                                               class="col-xs-6 col-md-6 o_light_label"
+                                        />
+                                        <field name="oss_folder_root" class="oe_inline"/>
+                                    </div>
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <button name="upload_existing"
+                                                type="object"
+                                                string="Upload existing attachments"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <record id="ir_attachment_oss_config_settings_action" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_id" ref="res_config_settings_view_form"/>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'ir_attachment_oss'}</field>
+    </record>
+    <menuitem
+            id="menu_oss_settings"
+            name="OSS Settings"
+            parent="base.next_id_9"
+            sequence="0"
+            action="ir_attachment_oss_config_settings_action"
+            groups="base.group_system"
+    />
+</odoo>
