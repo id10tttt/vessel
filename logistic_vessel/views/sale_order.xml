@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_order_tree_inherit" model="ir.ui.view">
+            <field name="name">sale.order form inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="replace">
+                    <tree>
+                        <field name="name" string="单号" readonly="1" decoration-bf="1"/>
+                        <field name="partner_id" readonly="1" string="Supplier"/>
+                        <field name="mv"/>
+                        <field name="invoice_no"/>
+                        <field name="owner_id"/>
+                        <field name="owner_ref"/>
+                        <field name="client_order_ref"/>
+                        <field name="team_id" optional="hide"/>
+                        <field name="company_id" groups="base.group_multi_company" optional="show" readonly="1"/>
+                        <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
+                        <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
+                        <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1"
+                               optional="show"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="state"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_order_form_inherit" model="ir.ui.view">
+            <field name="name">sale.order form inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='%(sale.action_view_sale_advance_payment_inv)d']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//div[@name='button_box']/button[@name='action_preview_sale_order']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="mv"/>
+                    <field name="invoice_no"/>
+                    <field name="owner_id"/>
+                    <field name="owner_ref"/>
+                    <field name="client_order_ref"/>
+                    <field name="email"/>
+                    <field name="location_id"/>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="delivery_date"/>
+                    <field name="invoice_date"/>
+                    <field name="warehouse_enter_no"/>
+                    <field name="order_type" groups="base.group_no_one"/>
+                    <field name="warehouse_id" groups="base.group_no_one"/>
+                </xpath>
+                <xpath expr="//page[@name='order_lines']" position="after">
+                    <page name="package_list_info" string="Package List">
+                        <field name="package_list">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="qty" sum="qty"/>
+                                <field name="gross_weight_pc" sum="gross_pc"/>
+                                <field name="gross_weight_kgs" sum="gross_kgs"/>
+                                <field name="net_weight_pc" sum="net_pc"/>
+                                <field name="net_weight_kgs" sum="net_kgs"/>
+                                <field name="length" sum="length" string="L(mm)"/>
+                                <field name="width" sum="width" string="W(mm)"/>
+                                <field name="height" sum="height" string="H(mm)"/>
+                                <field name="cbm_pc"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_sales_order_filter" model="ir.ui.view">
+            <field name="name">sale.order.list.select</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="15"/>
+            <field name="arch" type="xml">
+                <search string="Search Sales Order">
+                    <field name="name" string="订单"
+                           filter_domain="['|', '|', ('name', 'ilike', self), ('client_order_ref', 'ilike', self), ('partner_id', 'child_of', self)]"/>
+                    <field name="partner_id" operator="child_of" string="Supplier"/>
+                    <field name="owner_id" operator="child_of" string="Owner"/>
+                    <field name="user_id" string="创建人"/>
+                    <field name="invoice_no" string="Invoice No"/>
+                    <field name="owner_ref" string="Owner Ref"/>
+                    <field name="warehouse_enter_no" string="Warehouse Enter No"/>
+                    <field name="order_line" string="订单行产品"
+                           filter_domain="[('order_line.product_id', 'ilike', self)]"/>
+                    <field name="client_order_ref"/>
+                    <filter string="我的订单" domain="[('user_id', '=', uid)]" name="my_sale_orders_filter"/>
+                    <separator/>
+                    <filter string="入库订单" domain="[('order_type', '=', 'stock_in')]"
+                            name="stock_in_filter"/>
+                    <filter string="出库订单" domain="[('order_type', '=', 'stock_out')]"
+                            name="stock_out_filter"/>
+                    <separator/>
+                    <filter name="invoice_date" string="Invoice Date" date="invoice_date"/>
+                    <separator/>
+                    <filter name="delivery_date" string="Delivery Date" date="delivery_date"/>
+                    <separator/>
+                    <filter string="当日订单" name="today_schedule_order"
+                            domain="[('invoice_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Supplier" name="customer" domain="[]" context="{'group_by': 'partner_id'}"/>
+                        <filter string="Delivery Date" name="order_month" domain="[]"
+                                context="{'group_by': 'delivery_date'}"/>
+                        <filter string="Invoice Date" name="filter_invoice_date" domain="[]"
+                                context="{'group_by': 'invoice_date'}"/>
+                        <filter string="订单类型" name="order_type" domain="[]" context="{'group_by': 'order_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="logistic_sale_action_orders_stock_out" model="ir.actions.act_window">
+            <field name="name">出库订单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form,graph,pivot</field>
+            <field name="search_view_id" ref="view_sales_order_filter"/>
+            <field name="context">{'default_order_type': 'stock_out'}</field>
+            <field name="domain">[('order_type', '=', 'stock_out')]</field>
+        </record>
+
+        <record id="logistic_sale_action_orders_stock_in" model="ir.actions.act_window">
+            <field name="name">入库订单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form,graph,pivot</field>
+            <field name="search_view_id" ref="view_sales_order_filter"/>
+            <field name="context">{'default_order_type': 'stock_in'}</field>
+            <field name="domain">[('order_type', '=', 'stock_in')]</field>
+        </record>
+
+        <menuitem id="logistic_sale_menu_order"
+                  name="出库订单"
+                  action="logistic_sale_action_orders_stock_out"
+                  parent="sale.sale_menu_root"
+                  sequence="11"/>
+        <menuitem id="sale_stock_in_menu"
+                  name="入库订单"
+                  action="logistic_sale_action_orders_stock_in"
+                  parent="sale.sale_menu_root"
+                  sequence="12"/>
+
+    </data>
+</odoo>

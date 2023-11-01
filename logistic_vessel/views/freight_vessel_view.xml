@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="view_freight_vessel_form">
+            <field name="name">freight.vessel form</field>
+            <field name="model">freight.vessel</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="code"/>
+                                <field name="country"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_freight_vessel_tree">
+            <field name="name">freight.vessel tree</field>
+            <field name="model">freight.vessel</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="country"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_freight_vessel" model="ir.actions.act_window">
+            <field name="name">Vessel</field>
+            <field name="res_model">freight.vessel</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{
+                }
+            </field>
+        </record>
+
+        <menuitem id="menu_freight_vessel" name="Vessel" parent="sale.menu_sale_config"
+                  action="action_freight_vessel" sequence="60"/>
+    </data>
+</odoo>

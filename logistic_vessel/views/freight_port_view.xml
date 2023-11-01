@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="view_freight_port_form">
+            <field name="name">freight.port form</field>
+            <field name="model">freight.port</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="code"/>
+                                <field name="country"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="air"/>
+                                <field name="ocean"/>
+                            </group>
+                            <group>
+                                <field name="land"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_freight_port_tree">
+            <field name="name">freight.port tree</field>
+            <field name="model">freight.port</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="country"/>
+                    <field name="air"/>
+                    <field name="ocean"/>
+                    <field name="land"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_freight_port" model="ir.actions.act_window">
+            <field name="name">Ports</field>
+            <field name="res_model">freight.port</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{
+                }
+            </field>
+        </record>
+
+        <menuitem id="menu_freight_port" name="Ports" parent="sale.menu_sale_config"
+                  action="action_freight_port" sequence="70"/>
+    </data>
+</odoo>

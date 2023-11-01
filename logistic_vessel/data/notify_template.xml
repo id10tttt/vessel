@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="mail_template_sale_order_notify_chinese" model="mail.template">
+            <field name="name">Release: M/V {{ object.mv.name }} - {{ object.partner_id.name }} - {{ object.client_order_ref }} - Your ref. {{ object.invoice_no }}, {{ object.warehouse_enter_no }}</field>
+            <field name="model_id" ref="model_sale_order"/>
+            <field name="subject">Release: M/V {{ object.mv.name }} - {{ object.partner_id.name }} - {{ object.client_order_ref }} - Your ref. {{ object.invoice_no }}, {{ object.warehouse_enter_no }}</field>
+            <field name="email_from">{{ object.create_uid.sudo().email }}</field>
+            <field name="partner_to">{{ object.create_uid.id }}</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear 先生/女士：
+                        <t t-out="object.name or ''"/>
+                        <br/>
+                        <br/>
+                        请查看附件，附件为进仓地图以及进仓编号（进仓编号“-”后的数字是与Owner Ref编号对应的）。
+                        <br/>
+                        <br/>
+                        **请务必确保货物内不含液体，电池，易燃易爆等违禁物品及危险品，如在货物运输过程中发现此类物品，一切后果将由贵司承担，我司将保留对贵司的索赔权力.**
+                        <br/>
+                        ***：裸货请提前告知!!!***
+                        <br/>
+                        ***:凡是货物带有电池的请提前告知！！！***
+                        <br/>
+                        <br/>
+                        请告知：
+                        <br/>
+                        1.请安排至我司仓库（上海市浦东新区祝桥镇亭中村588-1号,我司仓库是不收进仓费的，仓库只接受顺丰到付，其他物流到付一律不接受 ，请特别注意）。另外，请在货物外箱上贴上“进仓编号”，否则将会导致仓库拒绝收货。
+                        <br/>
+                        ***顺丰到付费用我们将问收货人收取***
+                        <br/>
+                        ***顺丰到付的，请及时提供顺丰单号，以便于顺利入仓****
+                        <br/>
+                        ***在没有得到我方同意的情况下，不可以使用德邦快递****
+                        <br/>
+                        <br/>
+                        2.发送快递后，请提供快递面单扫描件，以便于我司追踪货物动向。(***货物重量在15KGS以内请发顺丰， 超过15KGS请提前告知，以便安排提货***）
+                        <br/>
+                        3.<font style="color: blue;">请提供货物的发票、箱单、以及货物申报要素HS（或者请提供货物的品名、材质、用途,特别是材质很重要）</font>，电子版即可。***凡是发票、箱单和申报要素提供不完全的一律不回传签单***
+                        <br/>
+                        ***从2019年7月1日开始，中国出口口岸查验率已经达到90%，主要查货物的品牌 ***
+                        <br/>
+                        4.另外，请问是否会提供单证？（可不提供，如若不告知，都默认为不提供单证，请知悉）如若提供单证，请贴于相应货物箱上于货物一起进仓，并请告知单证抬头名称。
+                        <br/>
+                        ***凡是需要提供报关资料的，请提前提供一份完整报关资料复印件或者电子版，以便提前审单。货物送出时，单证一定要当天提供，避免货到单证没到的情况。***
+                        <br/>
+                        5.此货是否含磁性/马达/油？
+                        <br/>
+                        ***特别注意：如果有“含油的压力表”，此货请提供化工鉴定或者提供货物的照片，要清晰，起码4张以上的各个角度的照片，用于做化工鉴定***
+                        <br/>
+                        ***特别注意：如果有“水银温度计”，此货请提前告知，这个货无法上飞机，可能要安排其他的运输方式***
+                        <br/>
+                        有任何问题都可与我联系，谢谢。
+
+                        <br/>
+                        <br/>
+                        Remind:请务必确保货物内不含液体，电池，易燃易爆等违禁物品及危险品，如在货物运输过程中发现此类物品，一切后果将由贵司承担，我司将保留对贵司的索赔权力。
+                        <br/>
+                        谢谢
+                        <!-- POWERED BY -->
+                        <tr>
+                            <td align="center" style="min-width: 590px;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="590"
+                                       style="min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;">
+                                    <tr>
+                                        <td style="text-align: center; font-size: 13px;">
+                                            技术支持
+                                            <a target="_blank" href=""
+                                               style="color: #875A7B;">邵氏物流
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+        <record id="mail_template_sale_order_notify_english" model="mail.template">
+            <field name="name">Release: M/V {{ object.mv.name }} - {{ object.partner_id.name }} - {{ object.client_order_ref }} - Your ref. {{ object.invoice_no }}, {{ object.warehouse_enter_no }}</field>
+            <field name="model_id" ref="model_sale_order"/>
+            <field name="subject">Release: M/V {{ object.mv.name }} - {{ object.partner_id.name }} - {{ object.client_order_ref }} - Your ref. {{ object.invoice_no }}, {{ object.warehouse_enter_no }}</field>
+            <field name="email_from">{{ object.create_uid.sudo().email }}</field>
+            <field name="partner_to">{{ object.create_uid.id }}</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear Sir/Madam,
+                        <t t-out="object.name or ''"/>
+                        <br/>
+
+                        Please kindly see attached the warehouse Map.
+                        <br/>
+                        <br/>
+                        Attentions(Or please provide the Chinese supplier TEL )
+                        <br/>
+                        1.Please provide the invoice and packing list to us.
+                        <br/>
+                        2.Please tell us the commodity name  and materials and purposes.
+                        <br/>
+                        <br/>
+                        <br/>
+                        Thanks.
+                        <!-- POWERED BY -->
+                        <tr>
+                            <td align="center" style="min-width: 590px;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="590"
+                                       style="min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;">
+                                    <tr>
+                                        <td style="text-align: center; font-size: 13px;">
+                                            Powered by
+                                            <a target="_blank" href="foxglobalsha.com"
+                                               style="color: #875A7B;">Fox Global Sha
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

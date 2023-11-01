@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="mail_template_delivery_notes" model="mail.template">
+            <field name="name">Release: M/V {{ object.sale_id.mv.name }} - {{ object.sale_id.partner_id.name }} - {{ object.sale_id.client_order_ref }} - Your ref. {{ object.sale_id.invoice_no }}, {{ object.warehouse_enter_no }}</field>
+            <field name="model_id" ref="model_stock_picking"/>
+            <field name="subject">Release: M/V {{ object.sale_id.mv.name }} - {{ object.sale_id.partner_id.name }} - {{ object.sale_id.client_order_ref }} - Your ref. {{ object.sale_id.invoice_no }}, {{ object.warehouse_enter_no }}</field>
+            <field name="email_from">{{ object.sale_id.create_uid.sudo().email }}</field>
+            <field name="partner_to">{{ object.create_uid.id }}</field>
+            <field name="email_to">{{ object.sale_id.email }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear Sir/Madam,
+                        <t t-out="object.warehouse_enter_no or ''"/>
+                        <br/>
+
+                        Please Confirm the quantity and quality within onw week after receiving the goods.
+                        <br/>
+                        Overdue acceptance shall be deemed qualified.
+
+                        <br/>
+                        <br/>
+                        We hereby acknowledge to receive above parts/equipment in good conditions.
+                        <br/>
+                        <br/>
+                        Thanks.
+                        <!-- POWERED BY -->
+                        <tr>
+                            <td align="center" style="min-width: 590px;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="590"
+                                       style="min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;">
+                                    <tr>
+                                        <td style="text-align: center; font-size: 13px;">
+                                            Powered by
+                                            <a target="_blank" href="foxglobalsha.com"
+                                               style="color: #875A7B;">Fox Global Sha
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">{{ object.sale_id.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>
