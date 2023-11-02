@@ -15,11 +15,10 @@
         "security/ir.model.access.csv",
         "views/res_config_settings_views.xml",
     ],
-    "qweb": [],
-    "demo": [],
     "post_load": None,
     "pre_init_hook": None,
     "post_init_hook": None,
     "auto_install": False,
     "installable": True,
+    "license": "AGPL-3",
 }

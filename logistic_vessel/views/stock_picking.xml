@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <data>
+        <record id="view_picking_internal_search_inherit" model="ir.ui.view">
+            <field name="name">stock.picking search inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="warehouse_enter_no"/>
+                    <field name="ref"/>
+                    <field name="dest"/>
+                    <field name="awb"/>
+                    <field name="arrival_date"/>
+                    <field name="departure_date"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="vpicktree_inherit" model="ir.ui.view">
+            <field name="name">stock.picking tree inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="default_order">ref desc</attribute>
+                </xpath>
+                <xpath expr="//tree/field[@name='origin']" position="after">
+                    <field name="warehouse_enter_no" optional="show"/>
+                    <field name="ref" optional="show"/>
+                    <field name="dest" optional="show"/>
+                    <field name="awb" optional="show"/>
+                    <field name="arrival_date" optional="show"/>
+                    <field name="departure_date" optional="show"/>
+                </xpath>
+            </field>
+        </record>
         <record id="view_picking_form_inherit" model="ir.ui.view">
             <field name="name">stock.picking form inherit</field>
             <field name="model">stock.picking</field>
