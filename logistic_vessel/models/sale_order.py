@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 import xlsxwriter
 from io import BytesIO
 import hashlib
@@ -34,11 +35,34 @@ class SaleOrder(models.Model):
     email = fields.Char('E-mail')
     invoice_no = fields.Char('Invoice No')
     owner_ref = fields.Char('Owner Ref')
+    ready_date = fields.Date('Ready Date')
     delivery_date = fields.Date('Delivery Date')
     invoice_date = fields.Date('Invoice Date')
     location_id = fields.Many2one('res.country.state', string='State')
     package_list = fields.One2many('vessel.package.list', 'order_id', string='Package List')
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_warehouse_no', store=True)
+
+    gross_weight_pc = fields.Float('Gross Weight(KG/pc)')
+    gross_weight_kgs = fields.Float('Gross Weight(KGS)')
+
+    net_weight_pc = fields.Float('Net Weight(KG/pc)')
+    net_weight_kgs = fields.Float('Net Weight(KGS)')
+
+    length = fields.Float('Length(mm)')
+    width = fields.Float('Width(mm)')
+    height = fields.Float('Height(mm)')
+    cbm_pc = fields.Char('CBM/pc')
+    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True)
+    dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True)
+
+    @api.depends('length', 'width', 'height')
+    def _compute_volume_and_dimensions(self):
+        for order_id in self:
+            order_id.dimensions = '{} x {} x {} cm'.format(
+                order_id.length / 100,
+                order_id.width / 100,
+                order_id.height / 100)
+            order_id.volume = (order_id.length / 100) * (order_id.width / 100) * (order_id.height / 100)
 
     @api.depends('owner_ref')
     def _compute_warehouse_no(self):
@@ -221,9 +245,72 @@ class SaleOrder(models.Model):
         """
         return self.env.ref('logistic_vessel.mail_template_sale_order_notify_chinese', raise_if_not_found=False)
 
+    def parse_stock_production_lot_data(self, order_line_id, lot_name):
+        lot_data = {
+            'product_id': order_line_id.product_id.id,
+            'company_id': self.env.company.id,
+            'name': lot_name
+        }
+        return lot_data
+
+    def _show_cancel_wizard(self):
+        # 去除邮件提示
+        return False
+
+    def get_production_lot_id(self, lot_data):
+        lot_obj = self.env['stock.lot'].sudo()
+        product_id = lot_data.get('product_id')
+        lot_name = lot_data.get('name')
+
+        lot_id = lot_obj.search([
+            ('product_id', '=', product_id),
+            ('name', '=', lot_name)
+        ])
+
+        if len(lot_id) > 1:
+            raise ValidationError(u'批次解析错误: {}'.format(lot_id.mapped('name')))
+
+        if lot_id:
+            return lot_id.id
+        else:
+            lot_id = self.env['stock.lot'].create(lot_data)
+            return lot_id.id
+
+    def get_set_product_production_lot(self):
+        for line_id in self:
+            owner_ref_lot = line_id.owner_ref
+            for order_line_id in line_id.order_line:
+                if order_line_id.product_type == 'service' or order_line_id.product_id.tracking != 'lot':
+                    continue
+
+                if order_line_id.product_lot_id:
+                    lot_name = owner_ref_lot
+                    if order_line_id.product_lot_id.name == lot_name:
+                        continue
+
+                lot_data = self.parse_stock_production_lot_data(order_line_id, owner_ref_lot)
+                lot_id = self.get_production_lot_id(lot_data)
+                order_line_id.product_lot_id = lot_id
+
+    # 确认订单时，创建服务费用
+    def action_confirm(self):
+        self.get_set_product_production_lot()
+        return super().action_confirm()
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
+
+    product_lot_id = fields.Many2one('stock.lot', string=u'批次')
+
+    def _prepare_procurement_values(self, group_id=False):
+        res = super(SaleOrderLine, self)._prepare_procurement_values(group_id=group_id)
+        res.update({
+            'sale_line_id': self.id,
+            'move_lot_id': self.product_lot_id.id,
+            'lot_name': self.order_id.owner_ref
+        })
+        return res
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
         """

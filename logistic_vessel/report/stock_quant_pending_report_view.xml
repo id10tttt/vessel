@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="view_stock_quant_pending_report_form">
+            <field name="name">stock.quant.pending.report form</field>
+            <field name="model">stock.quant.pending.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="supplier_id"/>
+                            <field name="mv"/>
+                            <field name="owner_ref"/>
+                            <field name="location"/>
+                            <field name="warehouse_enter_no"/>
+                            <field name="quantity"/>
+                            <field name="weight"/>
+                            <field name="volume"/>
+                            <field name="dimensions"/>
+                            <field name="ready_date"/>
+                            <field name="arrival_date"/>
+                            <field name="invoice"/>
+                            <field name="so"/>
+                            <field name="dest"/>
+                            <field name="awb"/>
+                            <field name="departure_date"/>
+                            <field name="ref"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_stock_quant_pending_report_tree">
+            <field name="name">stock.quant.pending.report tree</field>
+            <field name="model">stock.quant.pending.report</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="supplier_id"/>
+                    <field name="mv"/>
+                    <field name="owner_ref"/>
+                    <field name="location"/>
+                    <field name="warehouse_enter_no"/>
+                    <field name="quantity"/>
+                    <field name="weight"/>
+                    <field name="volume"/>
+                    <field name="dimensions"/>
+                    <field name="ready_date"/>
+                    <field name="arrival_date"/>
+                    <field name="invoice"/>
+                    <field name="so"/>
+                    <field name="dest"/>
+                    <field name="awb"/>
+                    <field name="departure_date"/>
+                    <field name="ref"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_stock_quant_pending_report" model="ir.actions.act_window">
+            <field name="name">Pending</field>
+            <field name="res_model">stock.quant.pending.report</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{
+                }
+            </field>
+        </record>
+
+        <menuitem id="menu_stock_quant_pending" name="Pending" action="action_view_stock_quant_pending_report"
+                  parent="stock.menu_warehouse_report" sequence="5"/>
+    </data>
+</odoo>

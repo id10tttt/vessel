@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 logistic_vessel.access_freight_port,access_freight_port,logistic_vessel.model_freight_port,base.group_user,1,1,1,1
 logistic_vessel.access_freight_vessel,access_freight_vessel,logistic_vessel.model_freight_vessel,base.group_user,1,1,1,1
 logistic_vessel.access_vessel_package_list,access_vessel_package_list,logistic_vessel.model_vessel_package_list,base.group_user,1,1,1,1
+logistic_vessel.access_stock_quant_pending_report,access_stock_quant_pending_report,logistic_vessel.model_stock_quant_pending_report,base.group_user,1,1,1,1
