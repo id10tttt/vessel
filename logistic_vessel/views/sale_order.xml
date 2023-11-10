@@ -50,28 +50,49 @@
                     <field name="location_id"/>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="ready_date"/>
                     <field name="delivery_date"/>
                     <field name="invoice_date"/>
                     <field name="warehouse_enter_no"/>
                     <field name="order_type" groups="base.group_no_one"/>
                     <field name="warehouse_id" groups="base.group_no_one"/>
                 </xpath>
+                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_subtotal']"
+                       position="before">
+                    <field name="product_lot_id" optional="hide"/>
+                </xpath>
                 <xpath expr="//page[@name='order_lines']" position="after">
                     <page name="package_list_info" string="Package List">
-                        <field name="package_list">
-                            <tree editable="bottom">
-                                <field name="name"/>
-                                <field name="qty" sum="qty"/>
-                                <field name="gross_weight_pc" sum="gross_pc"/>
-                                <field name="gross_weight_kgs" sum="gross_kgs"/>
-                                <field name="net_weight_pc" sum="net_pc"/>
-                                <field name="net_weight_kgs" sum="net_kgs"/>
-                                <field name="length" sum="length" string="L(mm)"/>
-                                <field name="width" sum="width" string="W(mm)"/>
-                                <field name="height" sum="height" string="H(mm)"/>
+                        <group>
+                            <group>
+                                <field name="gross_weight_pc"/>
+                                <field name="gross_weight_kgs"/>
+                                <field name="net_weight_pc"/>
+                                <field name="net_weight_kgs"/>
                                 <field name="cbm_pc"/>
-                            </tree>
-                        </field>
+                            </group>
+                            <group>
+                                <field name="length" string="L(mm)"/>
+                                <field name="width" string="W(mm)"/>
+                                <field name="height" string="H(mm)"/>
+                                <field name="volume"/>
+                                <field name="dimensions"/>
+                            </group>
+                        </group>
+                        <!--                        <field name="package_list">-->
+                        <!--                            <tree editable="bottom">-->
+                        <!--                                <field name="name"/>-->
+                        <!--                                <field name="qty" sum="qty"/>-->
+                        <!--                                <field name="gross_weight_pc" sum="gross_pc"/>-->
+                        <!--                                <field name="gross_weight_kgs" sum="gross_kgs"/>-->
+                        <!--                                <field name="net_weight_pc" sum="net_pc"/>-->
+                        <!--                                <field name="net_weight_kgs" sum="net_kgs"/>-->
+                        <!--                                <field name="length" sum="length" string="L(mm)"/>-->
+                        <!--                                <field name="width" sum="width" string="W(mm)"/>-->
+                        <!--                                <field name="height" sum="height" string="H(mm)"/>-->
+                        <!--                                <field name="cbm_pc"/>-->
+                        <!--                            </tree>-->
+                        <!--                        </field>-->
                     </page>
                 </xpath>
             </field>
@@ -144,12 +165,12 @@
                   name="出库订单"
                   action="logistic_sale_action_orders_stock_out"
                   parent="sale.sale_menu_root"
-                  sequence="11"/>
+                  sequence="2"/>
         <menuitem id="sale_stock_in_menu"
                   name="入库订单"
                   action="logistic_sale_action_orders_stock_in"
                   parent="sale.sale_menu_root"
-                  sequence="12"/>
+                  sequence="1"/>
 
     </data>
 </odoo>

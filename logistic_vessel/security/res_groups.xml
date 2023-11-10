@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="res.groups" id="group_menu_field_invisible">
+            <field name="name">Hidden items</field>
+        </record>
+    </data>
+</odoo>

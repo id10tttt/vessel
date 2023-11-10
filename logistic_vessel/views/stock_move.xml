@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_stock_move_operations_inherit" model="ir.ui.view">
+            <field name="name">stock.move form</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_stock_move_operations"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='move_line_ids']" position="before">
+                    <group>
+                        <group>
+                            <field name="move_lot_id" string="需求批次" readonly="1"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_stock_move_nosuggest_operations_inherit" model="ir.ui.view">
+            <field name="name">stock.move.operations.nosuggest.form</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_stock_move_nosuggest_operations"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='move_line_nosuggest_ids']" position="replace">
+                    <field name="lot_name" string="订单行批号" invisible="1"/>
+                    <field name="move_line_ids"
+                           attrs="{'readonly': ['|', ('state', '=', 'cancel'), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}"
+                           context="{'tree_view_ref': 'stock.view_stock_move_line_operation_tree',
+                           'default_product_uom_id': product_uom,
+                           'default_picking_id': picking_id,
+                           'default_move_id': id,
+                           'default_lot_name': lot_name,
+                           'default_product_id': product_id,
+                           'default_location_id': location_id,
+                           'default_location_dest_id': location_dest_id,
+                           'default_company_id': company_id}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
