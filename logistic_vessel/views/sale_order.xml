@@ -22,6 +22,14 @@
                         <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1"
                                optional="show"/>
                         <field name="currency_id" invisible="1"/>
+                        <field name="ready_date" optional="hide"/>
+                        <field name="delivery_date" optional="hide"/>
+                        <field name="invoice_date" optional="hide"/>
+                        <field name="location_id" optional="hide"/>
+                        <field name="warehouse_enter_no" optional="hide"/>
+                        <field name="gross_weight_pc" optional="hide"/>
+                        <field name="volume" optional="hide"/>
+                        <field name="dimensions" optional="hide"/>
                         <field name="state"/>
                     </tree>
                 </xpath>
