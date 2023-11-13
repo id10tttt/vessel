@@ -52,20 +52,20 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="mv" required="1"/>
-                    <field name="invoice_no"/>
-                    <field name="owner_id"/>
-                    <field name="owner_ref" required="1"/>
-                    <field name="client_order_ref"/>
-                    <field name="email"/>
-                    <field name="location_id"/>
+                    <field name="mv" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="invoice_no" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="owner_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="owner_ref" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="client_order_ref" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="email" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="location_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
-                    <field name="ready_date"/>
-                    <field name="delivery_date"/>
-                    <field name="invoice_date"/>
-                    <field name="warehouse_enter_no"/>
-                    <field name="order_type" groups="base.group_no_one"/>
+                    <field name="ready_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="delivery_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="invoice_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="warehouse_enter_no" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="order_type" groups="base.group_no_one" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                     <field name="warehouse_id" groups="base.group_no_one"/>
                 </xpath>
                 <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_subtotal']"

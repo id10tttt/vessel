@@ -23,7 +23,7 @@ class SaleOrder(models.Model):
         ('stock_out', u'出库订单'),
     ], string='订单类型', default='stock_out')
 
-    mv = fields.Many2one('freight.vessel', string='M/V')
+    mv = fields.Many2one('freight.vessel', string='M/V', tracking=True)
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string="Supplier",
@@ -31,29 +31,30 @@ class SaleOrder(models.Model):
         tracking=1,
         states=READONLY_FIELD_STATES,
         domain="[('type', '!=', 'private'), ('company_id', 'in', (False, company_id))]")
-    owner_id = fields.Many2one('res.partner', string='Owner')
-    email = fields.Char('E-mail')
-    invoice_no = fields.Char('Invoice No')
-    owner_ref = fields.Char('Owner Ref')
-    ready_date = fields.Date('Ready Date')
-    delivery_date = fields.Date('Delivery Date')
-    invoice_date = fields.Date('Invoice Date')
-    location_id = fields.Many2one('res.country.state', string='State')
+    owner_id = fields.Many2one('res.partner', string='Owner', tracking=True)
+    email = fields.Char('E-mail', tracking=True)
+    invoice_no = fields.Char('Invoice No', tracking=True)
+    owner_ref = fields.Char('Owner Ref', tracking=True)
+    ready_date = fields.Date('Ready Date', tracking=True)
+    delivery_date = fields.Date('Delivery Date', tracking=True)
+    invoice_date = fields.Date('Invoice Date', tracking=True)
+    location_id = fields.Many2one('res.country.state', string='State', tracking=True)
     package_list = fields.One2many('vessel.package.list', 'order_id', string='Package List')
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_warehouse_no', store=True)
 
-    gross_weight_pc = fields.Float('Gross Weight(KG/pc)')
-    gross_weight_kgs = fields.Float('Gross Weight(KGS)')
+    gross_weight_pc = fields.Float('Gross Weight(KG/pc)', tracking=True)
+    gross_weight_kgs = fields.Float('Gross Weight(KGS)', tracking=True)
 
-    net_weight_pc = fields.Float('Net Weight(KG/pc)')
-    net_weight_kgs = fields.Float('Net Weight(KGS)')
+    net_weight_pc = fields.Float('Net Weight(KG/pc)', tracking=True)
+    net_weight_kgs = fields.Float('Net Weight(KGS)', tracking=True)
 
-    length = fields.Float('Length(mm)')
-    width = fields.Float('Width(mm)')
-    height = fields.Float('Height(mm)')
-    cbm_pc = fields.Char('CBM/pc')
-    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True)
-    dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True)
+    length = fields.Float('Length(mm)', tracking=True)
+    width = fields.Float('Width(mm)', tracking=True)
+    height = fields.Float('Height(mm)', tracking=True)
+    cbm_pc = fields.Char('CBM/pc', tracking=True)
+    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True, tracking=True)
+    dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True,
+                             tracking=True)
 
     @api.depends('length', 'width', 'height')
     def _compute_volume_and_dimensions(self):
