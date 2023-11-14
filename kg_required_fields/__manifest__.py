@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-
 # Klystron Global LLC
 # Copyright (C) Klystron Global LLC
 # All Rights Reserved
 # https://www.klystronglobal.com/
-
-
 {
     'name': "Required Fields Highlight",
     'summary': """
@@ -13,11 +10,10 @@
     'description': """
         Highlights all required fields in bold on any form.""",
     'author': 'Klystron Global',
-    'maintainer':'Kiran K',
+    'maintainer': 'Kiran K',
     'website': "https://www.klystronglobal.com/",
     'images': ["static/description/banner.png"],
     'category': 'Extra Rights',
-    'version': "16.0.1.0.0",
     'license': 'AGPL-3',
     'depends': ['base'],
     'assets': {
@@ -26,5 +22,5 @@
         ],
     },
     'data': [
-             ],
+    ],
 }
