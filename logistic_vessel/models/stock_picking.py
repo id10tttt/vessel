@@ -26,7 +26,7 @@ class StockPicking(models.Model):
             lang = mail_template._render_lang(self.ids)[self.id]
         ctx = {
             'default_model': 'stock.picking',
-            'default_res_id': self.id,
+            'default_res_ids': self.ids,
             'default_use_template': bool(mail_template),
             'default_template_id': mail_template.id if mail_template else None,
             'default_composition_mode': 'comment',

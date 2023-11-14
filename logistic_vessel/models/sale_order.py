@@ -27,10 +27,9 @@ class SaleOrder(models.Model):
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string="Supplier",
-        required=True, readonly=False, change_default=True, index=True,
+        required=True, change_default=True, index=True,
         tracking=1,
-        states=READONLY_FIELD_STATES,
-        domain="[('type', '!=', 'private'), ('company_id', 'in', (False, company_id))]")
+        domain="[('company_id', 'in', (False, company_id))]")
     owner_id = fields.Many2one('res.partner', string='Owner', tracking=True)
     email = fields.Char('E-mail', tracking=True)
     invoice_no = fields.Char('Invoice No', tracking=True)
@@ -203,7 +202,7 @@ class SaleOrder(models.Model):
             lang = mail_template._render_lang(self.ids)[self.id]
         ctx = {
             'default_model': 'sale.order',
-            'default_res_id': self.id,
+            'default_res_ids': self.ids,
             'default_use_template': bool(mail_template),
             'default_template_id': mail_template.id if mail_template else None,
             'default_composition_mode': 'comment',
