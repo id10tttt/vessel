@@ -12,7 +12,6 @@
     "depends": ["web"],
     "external_dependencies": {"python": [], "bin": []},
     "data": [
-        "views/ir_attachment.xml"
     ],
     "installable": True,
 }
