@@ -396,9 +396,8 @@ class PackageList(models.Model):
     height = fields.Float('Height(cm)')
     cbm_pc = fields.Char('CBM/pc')
 
-    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True, tracking=True)
-    dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True,
-                             tracking=True)
+    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True)
+    dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True)
 
     @api.depends('length', 'width', 'height')
     def _compute_volume_and_dimensions(self):

@@ -49,6 +49,9 @@
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="ref"/>
                 </xpath>
+                <xpath expr="//field[@name='date_done']" position="replace">
+                    <field name="date_done" string="Arrival Date"/>
+                </xpath>
                 <xpath expr="//notebook" position="before">
                     <group>
                         <group>
