@@ -383,7 +383,7 @@ class PackageList(models.Model):
     _description = 'vessel Package'
 
     order_id = fields.Many2one('sale.order', string='Order')
-    name = fields.Char('Description', required=True)
+    name = fields.Char('Description', required=False)
     qty = fields.Float('Qty(pcs)', required=True)
     gross_weight_pc = fields.Float('Gross Weight(KG/pc)')
     gross_weight_kgs = fields.Float('Gross Weight(KGS)')
@@ -391,9 +391,9 @@ class PackageList(models.Model):
     net_weight_pc = fields.Float('Net Weight(KG/pc)')
     net_weight_kgs = fields.Float('Net Weight(KGS)')
 
-    length = fields.Float('Length(mm)')
-    width = fields.Float('Width(mm)')
-    height = fields.Float('Height(mm)')
+    length = fields.Float('Length(cm)')
+    width = fields.Float('Width(cm)')
+    height = fields.Float('Height(cm)')
     cbm_pc = fields.Char('CBM/pc')
 
     volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True, tracking=True)
@@ -404,7 +404,7 @@ class PackageList(models.Model):
     def _compute_volume_and_dimensions(self):
         for order_id in self:
             order_id.dimensions = '{} x {} x {} cm'.format(
-                order_id.length / 100,
-                order_id.width / 100,
-                order_id.height / 100)
-            order_id.volume = (order_id.length / 100) * (order_id.width / 100) * (order_id.height / 100)
+                order_id.length,
+                order_id.width,
+                order_id.height)
+            order_id.volume = order_id.length * order_id.width * order_id.height
