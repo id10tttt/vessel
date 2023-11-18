@@ -7,8 +7,8 @@ import hashlib
 import base64
 from odoo.tools import float_compare
 from tempfile import NamedTemporaryFile
-from odoo.modules.module import get_module_resource
 from odoo.tools.misc import file_path
+from odoo.addons.mail.models.mail_thread import MailThread
 
 READONLY_FIELD_STATES = {
     state: [('readonly', True)]
@@ -71,6 +71,52 @@ class SaleOrder(models.Model):
         prefix = 'FOXJ'
         for order_id in self:
             order_id.warehouse_enter_no = '{}-{}'.format(prefix, order_id.owner_ref or '')
+
+    def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
+        return [
+            [
+                'user',
+                lambda pdata: pdata['type'] == 'user',
+                {
+                    'active': True,
+                    'has_button_access': False
+                }
+            ], [
+                'portal',
+                lambda pdata: pdata['type'] == 'portal',
+                {
+                    'active': False,  # activate only on demand if rights are enabled
+                    'has_button_access': False,
+                }
+            ], [
+                'follower',
+                lambda pdata: pdata['is_follower'],
+                {
+                    'active': False,  # activate only on demand if rights are enabled
+                    'has_button_access': False,
+                }
+            ], [
+                'customer',
+                lambda pdata: True,
+                {
+                    'active': True,
+                    'has_button_access': False,
+                }
+            ]
+        ]
+
+    def _notify_by_email_prepare_rendering_context(self, message, msg_vals, model_description=False,
+                                                   force_email_company=False, force_email_lang=False):
+        res = super()._notify_by_email_prepare_rendering_context(message, msg_vals, model_description=model_description,
+                                                                 force_email_company=force_email_company,
+                                                                 force_email_lang=force_email_lang)
+        res.update({
+            'model_description': False,
+            'record': False,
+            'record_name': False,
+            'subtitles': False
+        })
+        return res
 
     def generate_template_attachment(self):
         with NamedTemporaryFile() as tmp:
@@ -138,7 +184,7 @@ class SaleOrder(models.Model):
                 cell_format_a4i4)
             worksheet.merge_range('A5:B6', '进仓编号 S/O\nNo：', cell_format_a5b6)
             worksheet.merge_range('C5:C6', 'FOXJ-', cell_format_c5c6)
-            worksheet.merge_range('D5:I6', self.client_order_ref, cell_format_d5i6)
+            worksheet.merge_range('D5:I6', self.owner_ref, cell_format_d5i6)
             worksheet.merge_range('A7:I7',
                                   '**本地图可以打印贴在货上，或者随身携带。无纸质地图不收货，进仓编号(手写无效)。***\n***寄送快递也是一样***',
                                   cell_format_a7i7)
