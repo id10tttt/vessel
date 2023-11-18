@@ -76,7 +76,7 @@ class SaleOrder(models.Model):
             qr_code_path = get_module_resource('logistic_vessel', 'static/src/img', 'qr_code.png')
             map_path = get_module_resource('logistic_vessel', 'static/src/img', 'map.png')
             workbook = xlsxwriter.Workbook(tmp.name, {'in_memory': True})
-            worksheet = workbook.add_worksheet(name=self.client_order_ref)
+            worksheet = workbook.add_worksheet(name=self.client_order_ref or self.warehouse_enter_no or 'FOXJ')
 
             file = open(fox_logo_path, 'rb')
             data = BytesIO(file.read())
