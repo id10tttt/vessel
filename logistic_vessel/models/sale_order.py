@@ -64,7 +64,7 @@ class SaleOrder(models.Model):
             ('res_model', '=', self._name)
         ])
         for record in self:
-            record.message_attachment_urls = '; '.join(x.url for x in attach_ids) if attach_ids else ''
+            record.message_attachment_urls = '; '.join(x.url or '' for x in attach_ids) if attach_ids else ''
 
     @api.depends('owner_ref')
     def _compute_warehouse_no(self):
