@@ -11,16 +11,16 @@
                         <field name="name" string="单号" readonly="1" decoration-bf="1"/>
                         <field name="partner_id" readonly="1" string="Supplier"/>
                         <field name="mv"/>
-                        <field name="invoice_no"/>
-                        <field name="owner_id"/>
+<!--                        <field name="invoice_no"/>-->
+<!--                        <field name="owner_id"/>-->
                         <field name="owner_ref"/>
                         <field name="client_order_ref"/>
                         <field name="team_id" optional="hide"/>
                         <field name="company_id" groups="base.group_multi_company" optional="show" readonly="1"/>
-                        <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
-                        <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
-                        <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1"
-                               optional="show"/>
+<!--                        <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>-->
+<!--                        <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>-->
+<!--                        <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1"-->
+<!--                               optional="show"/>-->
                         <field name="currency_id" invisible="1"/>
                         <field name="ready_date" optional="show"/>
                         <field name="delivery_date" optional="show"/>
