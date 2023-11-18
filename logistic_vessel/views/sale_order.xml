@@ -123,9 +123,10 @@
                     <field name="name" string="订单"
                            filter_domain="['|', '|', ('name', 'ilike', self), ('client_order_ref', 'ilike', self), ('partner_id', 'child_of', self)]"/>
                     <field name="partner_id" operator="child_of" string="Supplier"/>
-                    <field name="owner_id" operator="child_of" string="Owner"/>
+<!--                    <field name="owner_id" operator="child_of" string="Owner"/>-->
                     <field name="user_id" string="创建人"/>
-                    <field name="invoice_no" string="Invoice No"/>
+<!--                    <field name="invoice_no" string="Invoice No"/>-->
+                    <field name="mv"/>
                     <field name="owner_ref" string="Owner Ref"/>
                     <field name="warehouse_enter_no" string="Warehouse Enter No"/>
                     <field name="order_line" string="订单行产品"
