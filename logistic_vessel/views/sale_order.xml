@@ -101,10 +101,10 @@
 <!--                                <field name="gross_weight_kgs" sum="gross_kgs"/>-->
 <!--                                <field name="net_weight_pc" sum="net_pc"/>-->
 <!--                                <field name="net_weight_kgs" sum="net_kgs"/>-->
-                                <field name="length" sum="length" string="L(mm)"/>
-                                <field name="width" sum="width" string="W(mm)"/>
-                                <field name="height" sum="height" string="H(mm)"/>
-                                <field name="volume"/>
+                                <field name="length" sum="length" string="L(cm)"/>
+                                <field name="width" sum="width" string="W(cm)"/>
+                                <field name="height" sum="height" string="H(cm)"/>
+                                <field name="volume" sum="total_volume"/>
                                 <field name="dimensions"/>
 <!--                                <field name="cbm_pc"/>-->
                             </tree>
