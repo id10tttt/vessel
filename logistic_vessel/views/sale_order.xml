@@ -48,17 +48,23 @@
                 <xpath expr="//field[@name='pricelist_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_order']" position="replace">
+                    <field name="date_order" string="Ready Date"/>
+                </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="mv" required="1" readonly="state != 'draft'"/>
-                    <field name="invoice_no" readonly="state != 'draft'"/>
-                    <field name="owner_id" readonly="state != 'draft'"/>
+<!--                    <field name="invoice_no" readonly="state != 'draft'"/>-->
+<!--                    <field name="owner_id" readonly="state != 'draft'"/>-->
                     <field name="owner_ref" required="1" readonly="state != 'draft'"/>
                     <field name="client_order_ref" readonly="state != 'draft'"/>
                     <field name="email" readonly="state != 'draft'"/>
                     <field name="location_id" readonly="state != 'draft'"/>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
-                    <field name="ready_date" readonly="state != 'draft'"/>
+<!--                    <field name="ready_date" readonly="state != 'draft'"/>-->
                     <field name="delivery_date" readonly="state != 'draft'"/>
                     <field name="invoice_date" readonly="state != 'draft'"/>
                     <field name="warehouse_enter_no" readonly="state != 'draft'"/>

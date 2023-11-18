@@ -8,6 +8,7 @@ import base64
 from odoo.tools import float_compare
 from tempfile import NamedTemporaryFile
 from odoo.modules.module import get_module_resource
+from odoo.tools.misc import file_path
 
 READONLY_FIELD_STATES = {
     state: [('readonly', True)]
@@ -72,9 +73,12 @@ class SaleOrder(models.Model):
 
     def generate_template_attachment(self):
         with NamedTemporaryFile() as tmp:
-            fox_logo_path = get_module_resource('logistic_vessel', 'static/src/img', 'fox_logo.png')
-            qr_code_path = get_module_resource('logistic_vessel', 'static/src/img', 'qr_code.png')
-            map_path = get_module_resource('logistic_vessel', 'static/src/img', 'map.png')
+            # fox_logo_path = get_module_resource('logistic_vessel', 'static/src/img', 'fox_logo.png')
+            fox_logo_path = file_path('logistic_vessel/static/src/img/fox_logo.png')
+            # qr_code_path = get_module_resource('logistic_vessel', 'static/src/img', 'qr_code.png')
+            qr_code_path = file_path('logistic_vessel/static/src/img/qr_code.png')
+            # map_path = get_module_resource('logistic_vessel', 'static/src/img', 'map.png')
+            map_path = file_path('logistic_vessel/static/src/img/map.png')
             workbook = xlsxwriter.Workbook(tmp.name, {'in_memory': True})
             worksheet = workbook.add_worksheet(name=self.client_order_ref or self.warehouse_enter_no or 'FOXJ')
 

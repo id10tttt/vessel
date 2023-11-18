@@ -118,12 +118,12 @@ class Base(models.AbstractModel):
 
         return res
 
-    def _read(self, fnames):
-        url_fields = self._get_url_fields()
-        for fname in filter(lambda fname: fname in fnames, url_fields):
-            my_read(self._fields[fname], self)
-            fnames.remove(fname)
-        return super(Base, self)._read(fnames)
+    # def _read(self, fnames):
+    #     url_fields = self._get_url_fields()
+    #     for fname in filter(lambda fname: fname in fnames, url_fields):
+    #         my_read(self._fields[fname], self)
+    #         fnames.remove(fname)
+    #     return super(Base, self)._read(fnames)
 
     def with_context(self, *args, **kw):
         url_fields = self._get_url_fields()
