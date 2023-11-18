@@ -11,26 +11,28 @@
                         <field name="name" string="单号" readonly="1" decoration-bf="1"/>
                         <field name="partner_id" readonly="1" string="Supplier"/>
                         <field name="mv"/>
-<!--                        <field name="invoice_no"/>-->
-<!--                        <field name="owner_id"/>-->
+                        <!--                        <field name="invoice_no"/>-->
+                        <!--                        <field name="owner_id"/>-->
                         <field name="owner_ref"/>
                         <field name="client_order_ref"/>
                         <field name="team_id" optional="hide"/>
                         <field name="company_id" groups="base.group_multi_company" optional="show" readonly="1"/>
-<!--                        <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>-->
-<!--                        <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>-->
-<!--                        <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1"-->
-<!--                               optional="show"/>-->
+                        <!--                        <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>-->
+                        <!--                        <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>-->
+                        <!--                        <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1"-->
+                        <!--                               optional="show"/>-->
                         <field name="currency_id" invisible="1"/>
                         <field name="ready_date" optional="show"/>
                         <field name="delivery_date" optional="show"/>
                         <field name="invoice_date" optional="show"/>
                         <field name="location_id" optional="show"/>
                         <field name="warehouse_enter_no" optional="show"/>
-                        <field name="gross_weight_pc" optional="show"/>
-                        <field name="volume" optional="show"/>
-                        <field name="dimensions" optional="show"/>
                         <field name="state"/>
+                        <field name="dest" optional="hide"/>
+                        <field name="awb" optional="hide"/>
+                        <field name="departure_date" optional="hide"/>
+                        <field name="ref" optional="hide"/>
+                        <field name="message_attachment_urls" optional="hide"/>
                     </tree>
                 </xpath>
             </field>
@@ -45,15 +47,22 @@
                        position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//header/button[@name='action_preview_sale_order']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//field[@name='pricelist_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='date_order']" position="replace">
-                    <field name="date_order" string="Ready Date"/>
+                <xpath expr="//group[@name='sale_total']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
+                <!--                <xpath expr="//field[@name='date_order']" position="replace">-->
+                <!--                    <field name="date_order" string="Ready Date"/>-->
+                <!--                </xpath>-->
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="mv" required="1" readonly="state != 'draft'"/>
                     <!--                    <field name="invoice_no" readonly="state != 'draft'"/>-->
@@ -62,54 +71,159 @@
                     <field name="client_order_ref" readonly="state != 'draft'"/>
                     <field name="email" readonly="state != 'draft'"/>
                     <field name="location_id" readonly="state != 'draft'"/>
+                    <field name="order_type" invisible="1"/>
+                    <field name="dest" invisible="order_type in ('stock_in')"/>
+                    <field name="awb" invisible="order_type in ('stock_in')"/>
+                    <field name="departure_date" invisible="order_type in ('stock_in')"/>
+                    <field name="ref" invisible="order_type in ('stock_in')"/>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
                     <!--                    <field name="ready_date" readonly="state != 'draft'"/>-->
                     <field name="delivery_date" readonly="state != 'draft'"/>
-<!--                    <field name="invoice_date" readonly="state != 'draft'"/>-->
+                    <!--                    <field name="invoice_date" readonly="state != 'draft'"/>-->
                     <field name="warehouse_enter_no" readonly="state != 'draft'"/>
                     <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>
                     <field name="warehouse_id" groups="base.group_no_one"/>
                 </xpath>
-                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_subtotal']"
-                       position="before">
-                    <field name="product_lot_id" optional="hide"/>
-                </xpath>
-                <xpath expr="//page[@name='order_lines']" position="after">
-                    <page name="package_list_info" string="Package List">
-<!--                        <group>-->
-<!--                            <group>-->
-<!--                                <field name="gross_weight_pc"/>-->
-<!--                                <field name="gross_weight_kgs"/>-->
-<!--                                <field name="net_weight_pc"/>-->
-<!--                                <field name="net_weight_kgs"/>-->
-<!--                                <field name="cbm_pc"/>-->
-<!--                            </group>-->
-<!--                            <group>-->
-<!--                                <field name="length" string="L(mm)"/>-->
-<!--                                <field name="width" string="W(mm)"/>-->
-<!--                                <field name="height" string="H(mm)"/>-->
-<!--                                <field name="volume"/>-->
-<!--                                <field name="dimensions"/>-->
-<!--                            </group>-->
-<!--                        </group>-->
-                        <field name="package_list">
-                            <tree editable="bottom">
-                                <field name="name"/>
-                                <field name="qty" sum="qty"/>
-                                <field name="gross_weight_pc" sum="gross_pc"/>
-<!--                                <field name="gross_weight_kgs" sum="gross_kgs"/>-->
-<!--                                <field name="net_weight_pc" sum="net_pc"/>-->
-<!--                                <field name="net_weight_kgs" sum="net_kgs"/>-->
-                                <field name="length" sum="length" string="L(cm)"/>
-                                <field name="width" sum="width" string="W(cm)"/>
-                                <field name="height" sum="height" string="H(cm)"/>
-                                <field name="volume" sum="total_volume"/>
-                                <field name="dimensions"/>
-<!--                                <field name="cbm_pc"/>-->
-                            </tree>
-                        </field>
-                    </page>
+                <!--                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_subtotal']"-->
+                <!--                       position="before">-->
+                <!--                    <field name="product_lot_id" optional="hide"/>-->
+                <!--                </xpath>-->
+                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree" position="replace">
+                    <tree editable="bottom" limit="200">
+                        <field name="sequence" widget="handle"/>
+                        <!-- We do not display the type because we don't want the user to be bothered with that information if he has no section or note. -->
+                        <field name="display_type" column_invisible="True"/>
+                        <field name="product_uom_category_id" column_invisible="True"/>
+                        <field name="product_type" column_invisible="True"/>
+                        <field name="product_updatable" column_invisible="True"/>
+                        <field name="is_downpayment" column_invisible="True"/>
+                        <field name="product_id"
+                               optional="hide"
+                               readonly="not product_updatable"
+                               required="not display_type"
+                               force_save="1"
+                               context="{
+                                        'partner_id': parent.partner_id,
+                                        'quantity': product_uom_qty,
+                                        'pricelist': parent.pricelist_id,
+                                        'uom':product_uom,
+                                        'company_id': parent.company_id,
+                                        'default_lst_price': price_unit,
+                                        'default_description_sale': name
+                                    }"
+                               options="{
+                                        'no_open': True,
+                                    }"
+                               domain="[('sale_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
+                               widget="sol_product_many2one"/>
+                        <field name="gross_weight_pc"/>
+                        <field name="length"/>
+                        <field name="width"/>
+                        <field name="height"/>
+                        <field name="volume"/>
+                        <field name="dimensions"/>
+                        <field name="product_template_id"
+                               string="Product"
+                               column_invisible="True"
+                               readonly="not product_updatable"
+                               required="not display_type"
+                               context="{
+                                        'partner_id': parent.partner_id,
+                                        'quantity': product_uom_qty,
+                                        'pricelist': parent.pricelist_id,
+                                        'uom':product_uom,
+                                        'company_id': parent.company_id,
+                                        'default_list_price': price_unit,
+                                        'default_description_sale': name
+                                    }"
+                               options="{
+                                        'no_open': True,
+                                    }"
+                               domain="[('sale_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
+                               widget="sol_product_many2one"
+                               placeholder="Type to find a product..."/>
+                        <field name="name" widget="section_and_note_text" optional="show"/>
+                        <field name="analytic_distribution" widget="analytic_distribution"
+                               optional="hide"
+                               groups="analytic.group_analytic_accounting"
+                               options="{'product_field': 'product_id', 'business_domain': 'sale_order', 'amount_field': 'price_subtotal'}"/>
+                        <field
+                                name="product_uom_qty"
+                                decoration-info="(not display_type and invoice_status == 'to invoice')"
+                                decoration-bf="(not display_type and invoice_status == 'to invoice')"
+                                context="{
+                                        'partner_id': parent.partner_id,
+                                        'quantity': product_uom_qty,
+                                        'pricelist': parent.pricelist_id,
+                                        'uom': product_uom,
+                                        'company_id': parent.company_id
+                                    }"
+                                readonly="is_downpayment"/>
+                        <field column_invisible="True"
+                               name="qty_delivered"
+                               decoration-info="(not display_type and invoice_status == 'to invoice')"
+                               decoration-bf="(not display_type and invoice_status == 'to invoice')"
+                               string="Delivered"
+                               readonly="qty_delivered_method != 'manual' or is_downpayment"
+                               optional="show"/>
+                        <field name="qty_delivered_method" column_invisible="True"/>
+                        <field column_invisible="True"
+                               name="qty_invoiced"
+                               decoration-info="(not display_type and invoice_status == 'to invoice')"
+                               decoration-bf="(not display_type and invoice_status == 'to invoice')"
+                               string="Invoiced"
+                               optional="show"/>
+                        <field name="qty_to_invoice" column_invisible="True"/>
+                        <field name="product_uom_readonly" column_invisible="True"/>
+                        <field name="product_uom" column_invisible="True" groups="!uom.group_uom"/>
+                        <field
+                                name="product_uom"
+                                force_save="1"
+                                string="UoM"
+                                readonly="product_uom_readonly"
+                                required="not display_type"
+                                context="{'company_id': parent.company_id}"
+                                groups="uom.group_uom"
+                                options='{"no_open": True}'
+                                optional="show"/>
+                        <field name="customer_lead"
+                               optional="hide"
+                               readonly="parent.state not in ['draft', 'sent', 'sale'] or is_downpayment"/>
+                        <field name="product_packaging_qty" invisible="not product_id or not product_packaging_id"
+                               groups="product.group_stock_packaging" optional="show"/>
+                        <field name="product_packaging_id" invisible="not product_id"
+                               context="{'default_product_id': product_id, 'tree_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}"
+                               groups="product.group_stock_packaging" optional="show"/>
+                        <field optional="hide"
+                               name="price_unit" column_invisible="True"
+                               readonly="qty_invoiced &gt; 0"/>
+                        <field name="tax_id"
+                               widget="many2many_tags"
+                               options="{'no_create': True}"
+                               domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id), ('country_id', '=', parent.tax_country_id)]"
+                               context="{'active_test': True}"
+                               readonly="qty_invoiced &gt; 0 or is_downpayment"
+                               optional="hide"/>
+                        <field name="discount" string="Disc.%" groups="product.group_discount_per_so_line"
+                               optional="hide"/>
+                        <field name="is_downpayment" column_invisible="True" optional="hide"/>
+                        <field name="price_subtotal" string="Tax excl." invisible="is_downpayment" optional="hide"/>
+                        <field name="price_total"
+                               string="Tax incl."
+                               column_invisible="parent.tax_calculation_rounding_method == 'round_globally'"
+                               invisible="is_downpayment"
+                               optional="hide"/>
+                        <field name="product_lot_id" optional="hide" readonly="1"/>
+                        <field name="package_id" optional="hide" readonly="1"/>
+                        <!-- Others fields -->
+                        <field name="tax_calculation_rounding_method" column_invisible="True"/>
+                        <field name="state" column_invisible="True"/>
+                        <field name="invoice_status" column_invisible="True"/>
+                        <field name="currency_id" column_invisible="True"/>
+                        <field name="price_tax" column_invisible="True"/>
+                        <field name="company_id" column_invisible="True"/>
+                    </tree>
                 </xpath>
             </field>
         </record>
@@ -123,9 +237,9 @@
                     <field name="name" string="订单"
                            filter_domain="['|', '|', ('name', 'ilike', self), ('client_order_ref', 'ilike', self), ('partner_id', 'child_of', self)]"/>
                     <field name="partner_id" operator="child_of" string="Supplier"/>
-<!--                    <field name="owner_id" operator="child_of" string="Owner"/>-->
+                    <!--                    <field name="owner_id" operator="child_of" string="Owner"/>-->
                     <field name="user_id" string="创建人"/>
-<!--                    <field name="invoice_no" string="Invoice No"/>-->
+                    <!--                    <field name="invoice_no" string="Invoice No"/>-->
                     <field name="mv"/>
                     <field name="owner_ref" string="Owner Ref"/>
                     <field name="warehouse_enter_no" string="Warehouse Enter No"/>

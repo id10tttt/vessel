@@ -68,7 +68,7 @@
                                         <td style="text-align: center; font-size: 13px;">
                                             技术支持
                                             <a target="_blank" href=""
-                                               style="color: #875A7B;">上海福誉国际货运代理有限公司
+                                               style="color: #875A7B;"><t t-out="object.sudo().company_id.name or ''"/>
                                             </a>
                                         </td>
                                     </tr>

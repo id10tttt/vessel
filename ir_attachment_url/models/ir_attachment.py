@@ -68,6 +68,21 @@ class IrAttachment(models.Model):
                         bucket, data, filename, mimetype
                     )
                 )
+            if (
+                bucket
+                and values.get("raws")
+                and values.get("res_model") not in ["ir.ui.view", "ir.ui.menu"]
+            ):
+                values = self._check_contents(values)
+                raws = values.pop("raws")
+                data = base64.b64encode(raws)
+                filename = values.get("name")
+                mimetype = values.pop("mimetype")
+                values.update(
+                    self._get_datas_related_values_with_bucket(
+                        bucket, data, filename, mimetype
+                    )
+                )
         return super(IrAttachment, self).create(vals_list)
 
     def _get_datas_related_values_with_bucket(

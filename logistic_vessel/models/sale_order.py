@@ -18,6 +18,10 @@ READONLY_FIELD_STATES = {
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
+    _sql_constraints = [
+        ('unique_type_owner_ref_state', 'unique(order_type,owner_ref,state)',
+         'Order type and Owner Ref and Order state must unique!')
+    ]
 
     order_type = fields.Selection([
         ('stock_in', u'入库订单'),
@@ -42,28 +46,25 @@ class SaleOrder(models.Model):
     package_list = fields.One2many('vessel.package.list', 'order_id', string='Package List')
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_warehouse_no', store=True)
 
-    gross_weight_pc = fields.Float('Gross Weight(KG/pc)', tracking=True)
-    gross_weight_kgs = fields.Float('Gross Weight(KGS)', tracking=True)
+    message_attachment_urls = fields.Char('Attachment Url', compute='_compute_message_attachment_urls')
 
-    net_weight_pc = fields.Float('Net Weight(KG/pc)', tracking=True)
-    net_weight_kgs = fields.Float('Net Weight(KGS)', tracking=True)
+    dest = fields.Char('Dest')
+    awb = fields.Char('Awb')
+    departure_date = fields.Date('Departure Date')
+    ref = fields.Char('Ref')
 
-    length = fields.Float('Length(mm)', tracking=True)
-    width = fields.Float('Width(mm)', tracking=True)
-    height = fields.Float('Height(mm)', tracking=True)
-    cbm_pc = fields.Char('CBM/pc', tracking=True)
-    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True, tracking=True)
-    dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True,
-                             tracking=True)
+    def action_cancel(self):
+        if any([[p.state == 'done' for p in self.picking_ids]]):
+            raise ValidationError('不允许取消')
+        return super().action_cancel()
 
-    @api.depends('length', 'width', 'height')
-    def _compute_volume_and_dimensions(self):
-        for order_id in self:
-            order_id.dimensions = '{} x {} x {} cm'.format(
-                order_id.length / 100,
-                order_id.width / 100,
-                order_id.height / 100)
-            order_id.volume = (order_id.length / 100) * (order_id.width / 100) * (order_id.height / 100)
+    def _compute_message_attachment_urls(self):
+        attach_ids = self.env['ir.attachment'].search([
+            ('res_id', 'in', self.ids),
+            ('res_model', '=', self._name)
+        ])
+        for record in self:
+            record.message_attachment_urls = '; '.join(x.url for x in attach_ids) if attach_ids else ''
 
     @api.depends('owner_ref')
     def _compute_warehouse_no(self):
@@ -73,14 +74,11 @@ class SaleOrder(models.Model):
 
     def generate_template_attachment(self):
         with NamedTemporaryFile() as tmp:
-            # fox_logo_path = get_module_resource('logistic_vessel', 'static/src/img', 'fox_logo.png')
             fox_logo_path = file_path('logistic_vessel/static/src/img/fox_logo.png')
-            # qr_code_path = get_module_resource('logistic_vessel', 'static/src/img', 'qr_code.png')
             qr_code_path = file_path('logistic_vessel/static/src/img/qr_code.png')
-            # map_path = get_module_resource('logistic_vessel', 'static/src/img', 'map.png')
             map_path = file_path('logistic_vessel/static/src/img/map.png')
             workbook = xlsxwriter.Workbook(tmp.name, {'in_memory': True})
-            worksheet = workbook.add_worksheet(name=self.client_order_ref or self.warehouse_enter_no or 'FOXJ')
+            worksheet = workbook.add_worksheet(name=self.owner_ref or self.warehouse_enter_no or 'FOXJ')
 
             file = open(fox_logo_path, 'rb')
             data = BytesIO(file.read())
@@ -185,7 +183,7 @@ class SaleOrder(models.Model):
 
             stram_encode = base64.b64encode(stream)
             file_md5 = hashlib.md5(stream)
-            file_name = "{}.xlsx".format(self.client_order_ref)
+            file_name = "{}.xlsx".format(self.owner_ref)
             attachment_data = {
                 'name': file_name,
                 'datas': stram_encode,
@@ -296,22 +294,105 @@ class SaleOrder(models.Model):
                 lot_id = self.get_production_lot_id(lot_data)
                 order_line_id.product_lot_id = lot_id
 
+    def get_stock_quant_package_id(self, package_data):
+        package_obj = self.env['stock.quant.package'].sudo()
+        package_name = package_data.get('name')
+
+        package_id = package_obj.search([
+            ('name', '=', package_name)
+        ])
+
+        if len(package_id) > 1:
+            raise ValidationError(u'Package解析错误: {}'.format(package_id.mapped('name')))
+
+        if package_id:
+            return package_id.id
+        else:
+            package_id = package_obj.create(package_data)
+            return package_id.id
+
+    def parse_stock_quant_package_data(self, order_line_id, package_name):
+        package_data = {
+            'name': package_name,
+            'length': order_line_id.length,
+            'width': order_line_id.width,
+            'height': order_line_id.height,
+            'gross_weight_pc': order_line_id.gross_weight_pc,
+        }
+        return package_data
+
+    def get_set_product_package(self):
+        for line_id in self:
+            owner_ref_lot = line_id.owner_ref
+            for order_line_id in line_id.order_line:
+                if order_line_id.product_type == 'service' or order_line_id.product_id.tracking != 'lot':
+                    continue
+
+                package_name = '{}#{}{}{}'.format(owner_ref_lot, order_line_id.length, order_line_id.width,
+                                                  order_line_id.height)
+
+                if order_line_id.package_id:
+
+                    if order_line_id.package_id.name == package_name:
+                        continue
+
+                package_data = self.parse_stock_quant_package_data(order_line_id, owner_ref_lot)
+                package_id = self.get_stock_quant_package_id(package_data)
+                order_line_id.package_id = package_id
+
     # 确认订单时，创建服务费用
     def action_confirm(self):
+        # 设置批次
         self.get_set_product_production_lot()
+        # 设置Package
+        self.get_set_product_package()
         return super().action_confirm()
 
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
+    def set_default_product_id(self):
+        default_product_id = self.env['product.product'].sudo().search([
+            ('default_code', '=', '000000')
+        ])
+        if not default_product_id:
+            return False
+        return default_product_id.id
+
+    product_id = fields.Many2one(
+        comodel_name='product.product',
+        string="Product",
+        default=lambda self: self.set_default_product_id(),
+        change_default=True, ondelete='restrict', check_company=True, index='btree_not_null',
+        domain="[('sale_ok', '=', True)]")
     product_lot_id = fields.Many2one('stock.lot', string=u'批次')
+    gross_weight_pc = fields.Float('Gross Weight(KG/pc)', required=True, default='0.0')
+
+    length = fields.Float('Length(cm)', required=True)
+    width = fields.Float('Width(cm)', required=True)
+    height = fields.Float('Height(cm)', required=True)
+
+    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True)
+    dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True)
+
+    package_id = fields.Many2one('stock.quant.package', string='Package')
+
+    @api.depends('length', 'width', 'height')
+    def _compute_volume_and_dimensions(self):
+        for order_id in self:
+            order_id.dimensions = '{} x {} x {} cm'.format(
+                order_id.length,
+                order_id.width,
+                order_id.height)
+            order_id.volume = order_id.length * order_id.width * order_id.height
 
     def _prepare_procurement_values(self, group_id=False):
         res = super(SaleOrderLine, self)._prepare_procurement_values(group_id=group_id)
         res.update({
             'sale_line_id': self.id,
             'move_lot_id': self.product_lot_id.id,
+            'move_package_id': self.package_id.id,
             'lot_name': self.order_id.owner_ref
         })
         return res

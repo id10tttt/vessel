@@ -7,6 +7,27 @@
         <record id="stock.menu_product_stock" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, False, [ref('logistic_vessel.group_menu_field_invisible')])]"/>
         </record>
+        <record id="sale.menu_sale_quotations" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, False, [ref('logistic_vessel.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="sale.report_sales_team" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, False, [ref('logistic_vessel.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="sale.menu_sale_report" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, False, [ref('logistic_vessel.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="stock_account.menu_valuation" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, False, [ref('logistic_vessel.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="stock_account.menu_inventory_aging" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, False, [ref('logistic_vessel.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="stock.stock_move_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, False, [ref('logistic_vessel.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="account.menu_finance" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, False, [ref('logistic_vessel.group_menu_field_invisible')])]"/>
+        </record>
 <!--        <record id="sale.sale_order_menu" model="ir.ui.menu">-->
 <!--            <field name="groups_id" eval="[(6, False, [ref('logistic_vessel.group_menu_field_invisible')])]"/>-->
 <!--        </record>-->

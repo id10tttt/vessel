@@ -14,6 +14,7 @@
                             <field name="height"/>
                         </group>
                         <group>
+                            <field name="gross_weight_pc"/>
                             <field name="dimensions"/>
                         </group>
                     </group>

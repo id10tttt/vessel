@@ -13,6 +13,7 @@
                             <field name="owner_ref"/>
                             <field name="location"/>
                             <field name="warehouse_enter_no"/>
+                            <field name="reserved_quantity"/>
                             <field name="quantity"/>
                             <field name="weight"/>
                             <field name="volume"/>
@@ -25,6 +26,8 @@
                             <field name="awb"/>
                             <field name="departure_date"/>
                             <field name="ref"/>
+                            <field name="lot_id"/>
+                            <field name="package_id"/>
                         </group>
                     </sheet>
                 </form>
@@ -40,6 +43,7 @@
                     <field name="owner_ref"/>
                     <field name="location"/>
                     <field name="warehouse_enter_no"/>
+                    <field name="reserved_quantity"/>
                     <field name="quantity"/>
                     <field name="weight"/>
                     <field name="volume"/>
@@ -52,7 +56,37 @@
                     <field name="awb"/>
                     <field name="departure_date"/>
                     <field name="ref"/>
+                    <field name="lot_id" optional="hide"/>
+                    <field name="package_id" optional="hide"/>
                 </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_stock_quant_pending_report_search">
+            <field name="name">stock.quant.pending.report search</field>
+            <field name="model">stock.quant.pending.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="mv"/>
+                    <field name="owner_ref"/>
+                    <field name="location"/>
+                    <field name="warehouse_enter_no"/>
+                    <field name="reserved_quantity"/>
+                    <field name="quantity"/>
+                    <field name="weight"/>
+                    <field name="volume"/>
+                    <field name="dimensions"/>
+                    <field name="ready_date"/>
+                    <field name="arrival_date"/>
+                    <field name="invoice"/>
+                    <field name="so"/>
+                    <field name="dest"/>
+                    <field name="awb"/>
+                    <field name="departure_date"/>
+                    <field name="ref"/>
+                    <field name="lot_id" optional="hide"/>
+                    <field name="package_id" optional="hide"/>
+                </search>
             </field>
         </record>
 
@@ -64,6 +98,14 @@
             <field name="context">{
                 }
             </field>
+        </record>
+        <record id="model_stock_quant_report" model="ir.actions.server">
+            <field name="name">出库</field>
+            <field name="model_id" ref="logistic_vessel.model_stock_quant_pending_report"/>
+            <field name="binding_model_id" ref="logistic_vessel.model_stock_quant_pending_report"/>
+            <field name="binding_view_types">form,list</field>
+            <field name="state">code</field>
+            <field name="code">action = records.stock_quant_stock_out()</field>
         </record>
 
         <menuitem id="menu_stock_quant_pending" name="Pending" action="action_view_stock_quant_pending_report"

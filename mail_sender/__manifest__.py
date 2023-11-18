@@ -11,7 +11,7 @@
 
     'author': "geninit, Jeffery",
     'website': "http://www.geninit.cn",
-
+    'license': 'AGPL-3',
     'category': 'Utility',
     'version': '0.1',
 
@@ -22,5 +22,5 @@
     ],
 
     'auto_install': True
-    
+
 }

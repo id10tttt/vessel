@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="view_stock_quant_stock_out_form">
+            <field name="name">stock.quant.stock.out.wizard form</field>
+            <field name="model">stock.quant.stock.out.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="mv"/>
+                            <field name="owner_ref"/>
+                            <field name="dest"/>
+                            <field name="awb"/>
+                            <field name="departure_date"/>
+                            <field name="ref"/>
+                        </group>
+                        <notebook>
+                            <page string="Line">
+                                <field name="line_ids">
+                                    <tree>
+                                        <field name="package_id"/>
+                                        <field name="qty"/>
+                                        <field name="weight"/>
+                                        <field name="volume"/>
+                                        <field name="dimensions"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <footer>
+                            <button name="create_stock_out_order"
+                                    string="生成出库单"
+                                    type="object"
+                                    class="oe_highlight"/>
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

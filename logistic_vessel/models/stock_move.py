@@ -7,12 +7,20 @@ class StockMove(models.Model):
 
     lot_name = fields.Char('批次号')
     move_lot_id = fields.Many2one('stock.lot', string=u'需求批次')
+    move_package_id = fields.Many2one('stock.quant.package', string=u'Package')
 
     def _prepare_move_line_vals(self, quantity=None, reserved_quant=None):
-        default_vals = dict(
-            lot_id=self.sale_line_id.product_lot_id.id,
-            lot_name=self.sale_line_id.order_id.owner_ref
-        )
+        if self.sale_line_id.order_id.order_type == 'stock_in':
+            default_vals = dict(
+                lot_id=self.sale_line_id.product_lot_id.id,
+                result_package_id=self.sale_line_id.package_id.id,
+                lot_name=self.sale_line_id.order_id.owner_ref
+            )
+        else:
+            default_vals = dict(
+                lot_id=self.sale_line_id.product_lot_id.id,
+                lot_name=self.sale_line_id.order_id.owner_ref
+            )
         vals = super(StockMove, self)._prepare_move_line_vals(quantity, reserved_quant)
         default_vals.update(vals)
         return default_vals
@@ -28,15 +36,19 @@ class StockMove(models.Model):
                                 strict=False, allow_negative=False):
         if not lot_id:
             lot_id = self.move_lot_id or self.sale_line_id.product_lot_id
+        if not package_id:
+            package_id = self.move_package_id or self.sale_line_id.package_id
         return super()._get_available_quantity(product_id=product_id, location_id=location_id, lot_id=lot_id,
                                                package_id=package_id, owner_id=owner_id, strict=strict,
                                                allow_negative=allow_negative)
 
-    def _update_reserved_quantity(self, need, available_quantity, location_id, lot_id=None, package_id=None,
-                                  owner_id=None, strict=True):
+    def _update_reserved_quantity(self, need, location_id, quant_ids=None, lot_id=None, package_id=None, owner_id=None,
+                                  strict=True):
         self.ensure_one()
         if not lot_id:
             lot_id = self.move_lot_id or self.sale_line_id.product_lot_id
+        if not package_id:
+            package_id = self.move_package_id or self.sale_line_id.package_id
         return super(StockMove, self)._update_reserved_quantity(
-            need, available_quantity, location_id, lot_id=lot_id,
+            need, location_id, quant_ids=quant_ids, lot_id=lot_id,
             package_id=package_id, owner_id=owner_id, strict=strict)
