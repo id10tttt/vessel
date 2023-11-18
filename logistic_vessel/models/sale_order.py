@@ -395,3 +395,16 @@ class PackageList(models.Model):
     width = fields.Float('Width(mm)')
     height = fields.Float('Height(mm)')
     cbm_pc = fields.Char('CBM/pc')
+
+    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True, tracking=True)
+    dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True,
+                             tracking=True)
+
+    @api.depends('length', 'width', 'height')
+    def _compute_volume_and_dimensions(self):
+        for order_id in self:
+            order_id.dimensions = '{} x {} x {} cm'.format(
+                order_id.length / 100,
+                order_id.width / 100,
+                order_id.height / 100)
+            order_id.volume = (order_id.length / 100) * (order_id.width / 100) * (order_id.height / 100)

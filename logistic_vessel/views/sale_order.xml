@@ -56,17 +56,17 @@
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="mv" required="1" readonly="state != 'draft'"/>
-<!--                    <field name="invoice_no" readonly="state != 'draft'"/>-->
-<!--                    <field name="owner_id" readonly="state != 'draft'"/>-->
+                    <!--                    <field name="invoice_no" readonly="state != 'draft'"/>-->
+                    <!--                    <field name="owner_id" readonly="state != 'draft'"/>-->
                     <field name="owner_ref" required="1" readonly="state != 'draft'"/>
                     <field name="client_order_ref" readonly="state != 'draft'"/>
                     <field name="email" readonly="state != 'draft'"/>
                     <field name="location_id" readonly="state != 'draft'"/>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
-<!--                    <field name="ready_date" readonly="state != 'draft'"/>-->
+                    <!--                    <field name="ready_date" readonly="state != 'draft'"/>-->
                     <field name="delivery_date" readonly="state != 'draft'"/>
-                    <field name="invoice_date" readonly="state != 'draft'"/>
+<!--                    <field name="invoice_date" readonly="state != 'draft'"/>-->
                     <field name="warehouse_enter_no" readonly="state != 'draft'"/>
                     <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>
                     <field name="warehouse_id" groups="base.group_no_one"/>
@@ -77,36 +77,38 @@
                 </xpath>
                 <xpath expr="//page[@name='order_lines']" position="after">
                     <page name="package_list_info" string="Package List">
-                        <group>
-                            <group>
-                                <field name="gross_weight_pc"/>
-                                <field name="gross_weight_kgs"/>
-                                <field name="net_weight_pc"/>
-                                <field name="net_weight_kgs"/>
-                                <field name="cbm_pc"/>
-                            </group>
-                            <group>
-                                <field name="length" string="L(mm)"/>
-                                <field name="width" string="W(mm)"/>
-                                <field name="height" string="H(mm)"/>
+<!--                        <group>-->
+<!--                            <group>-->
+<!--                                <field name="gross_weight_pc"/>-->
+<!--                                <field name="gross_weight_kgs"/>-->
+<!--                                <field name="net_weight_pc"/>-->
+<!--                                <field name="net_weight_kgs"/>-->
+<!--                                <field name="cbm_pc"/>-->
+<!--                            </group>-->
+<!--                            <group>-->
+<!--                                <field name="length" string="L(mm)"/>-->
+<!--                                <field name="width" string="W(mm)"/>-->
+<!--                                <field name="height" string="H(mm)"/>-->
+<!--                                <field name="volume"/>-->
+<!--                                <field name="dimensions"/>-->
+<!--                            </group>-->
+<!--                        </group>-->
+                        <field name="package_list">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="qty" sum="qty"/>
+                                <field name="gross_weight_pc" sum="gross_pc"/>
+<!--                                <field name="gross_weight_kgs" sum="gross_kgs"/>-->
+<!--                                <field name="net_weight_pc" sum="net_pc"/>-->
+<!--                                <field name="net_weight_kgs" sum="net_kgs"/>-->
+                                <field name="length" sum="length" string="L(mm)"/>
+                                <field name="width" sum="width" string="W(mm)"/>
+                                <field name="height" sum="height" string="H(mm)"/>
                                 <field name="volume"/>
                                 <field name="dimensions"/>
-                            </group>
-                        </group>
-                        <!--                        <field name="package_list">-->
-                        <!--                            <tree editable="bottom">-->
-                        <!--                                <field name="name"/>-->
-                        <!--                                <field name="qty" sum="qty"/>-->
-                        <!--                                <field name="gross_weight_pc" sum="gross_pc"/>-->
-                        <!--                                <field name="gross_weight_kgs" sum="gross_kgs"/>-->
-                        <!--                                <field name="net_weight_pc" sum="net_pc"/>-->
-                        <!--                                <field name="net_weight_kgs" sum="net_kgs"/>-->
-                        <!--                                <field name="length" sum="length" string="L(mm)"/>-->
-                        <!--                                <field name="width" sum="width" string="W(mm)"/>-->
-                        <!--                                <field name="height" sum="height" string="H(mm)"/>-->
-                        <!--                                <field name="cbm_pc"/>-->
-                        <!--                            </tree>-->
-                        <!--                        </field>-->
+<!--                                <field name="cbm_pc"/>-->
+                            </tree>
+                        </field>
                     </page>
                 </xpath>
             </field>
