@@ -424,6 +424,9 @@ class SaleOrderLine(models.Model):
 
     package_id = fields.Many2one('stock.quant.package', string='Package')
 
+    hs_code = fields.Char('HS Code')
+    declaration = fields.Char('Customs declaration')
+
     @api.depends('length', 'width', 'height')
     def _compute_volume_and_dimensions(self):
         for order_id in self:
