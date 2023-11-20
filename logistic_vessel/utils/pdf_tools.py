@@ -38,9 +38,9 @@ class ProcessPDF:
         PDF转化为图片
         """
         if self.pdf_file_path:
-            doc = fitz.open(self.pdf_file_path)
+            doc = fitz.Document(self.pdf_file_path)
         else:
-            doc = fitz.open(stream=self.pdf_content)
+            doc = fitz.Document(stream=self.pdf_content)
         # for pg in range(doc.page_count):
         page = doc[0]
         rotate = int(0)
@@ -57,10 +57,10 @@ class ProcessPDF:
         """
         图片转化为PDF
         """
-        doc = fitz.open()
-        imgdoc = fitz.open(img_file)
+        doc = fitz.Document()
+        imgdoc = fitz.Document(img_file)
         pdfbytes = imgdoc.convert_to_pdf()  # 使用图片创建单页的 PDF
-        imgpdf = fitz.open("pdf", pdfbytes)
+        imgpdf = fitz.Document("pdf", pdfbytes)
         doc.insert_pdf(imgpdf)  # 将当前页插入文档
         pdf_bytes = doc.tobytes()
         doc.close()
