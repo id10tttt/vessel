@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record forcecreate="True" id="decimal_package_volume" model="decimal.precision">
+            <field name="name">Vessel Package Volume</field>
+            <field name="digits" eval="4"/>
+        </record>
+    </data>
+</odoo>

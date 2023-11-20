@@ -22,8 +22,7 @@
                         <!--                        <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1"-->
                         <!--                               optional="show"/>-->
                         <field name="currency_id" invisible="1"/>
-                        <field name="ready_date" optional="show"/>
-                        <field name="delivery_date" optional="show"/>
+                        <field name="date_order" optional="show"/>
                         <field name="invoice_date" optional="show"/>
                         <field name="location_id" optional="show"/>
                         <field name="warehouse_enter_no" optional="show"/>
@@ -60,9 +59,6 @@
                 <xpath expr="//group[@name='sale_total']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <!--                <xpath expr="//field[@name='date_order']" position="replace">-->
-                <!--                    <field name="date_order" string="Ready Date"/>-->
-                <!--                </xpath>-->
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="mv" required="1" readonly="state != 'draft'"/>
                     <!--                    <field name="invoice_no" readonly="state != 'draft'"/>-->
@@ -78,12 +74,16 @@
                     <field name="ref" invisible="order_type in ('stock_in')"/>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
-                    <!--                    <field name="ready_date" readonly="state != 'draft'"/>-->
-                    <field name="delivery_date" readonly="state != 'draft'"/>
-                    <!--                    <field name="invoice_date" readonly="state != 'draft'"/>-->
+                    <field name="arrival_date" readonly="state != 'draft'"/>
                     <field name="warehouse_enter_no" readonly="state != 'draft'"/>
                     <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>
                     <field name="warehouse_id" groups="base.group_no_one"/>
+                </xpath>
+                <xpath expr="//label[@for='date_order']" position="replace">
+                    <label for="date_order" string="Ready Date"/>
+                </xpath>
+                <xpath expr="//field[@name='validity_date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <!--                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_subtotal']"-->
                 <!--                       position="before">-->
@@ -255,17 +255,15 @@
                     <filter string="出库订单" domain="[('order_type', '=', 'stock_out')]"
                             name="stock_out_filter"/>
                     <separator/>
-                    <filter name="invoice_date" string="Invoice Date" date="invoice_date"/>
-                    <separator/>
-                    <filter name="delivery_date" string="Delivery Date" date="delivery_date"/>
+                    <filter name="date_order" string="Ready Date"/>
                     <separator/>
                     <filter string="当日订单" name="today_schedule_order"
                             domain="[('invoice_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
                     <separator/>
                     <group expand="0" string="Group By">
                         <filter string="Supplier" name="customer" domain="[]" context="{'group_by': 'partner_id'}"/>
-                        <filter string="Delivery Date" name="order_month" domain="[]"
-                                context="{'group_by': 'delivery_date'}"/>
+                        <filter string="Ready Date" name="order_month" domain="[]"
+                                context="{'group_by': 'date_order'}"/>
                         <filter string="Invoice Date" name="filter_invoice_date" domain="[]"
                                 context="{'group_by': 'invoice_date'}"/>
                         <filter string="订单类型" name="order_type" domain="[]" context="{'group_by': 'order_type'}"/>

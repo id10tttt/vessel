@@ -49,7 +49,7 @@ class StockQuantPending(models.Model):
                 so.owner_ref as owner_ref,
                 rcs.name as location,
                 so.warehouse_enter_no as warehouse_enter_no,
-                so.ready_date as ready_date,
+                so.date_order as ready_date,
                 sq.quantity as quantity,
                 sq.reserved_quantity as reserved_quantity,
                 so.invoice_no as invoice,
@@ -58,7 +58,7 @@ class StockQuantPending(models.Model):
                 '' as awb,
                 '' as departure_date,
                 '' as ref,
-                so.date_order as arrival_date
+                so.arrival_date as arrival_date
             from
                 stock_quant as sq
             left join stock_location sl2 on
@@ -93,7 +93,7 @@ class StockQuantPending(models.Model):
                 so.owner_ref as owner_ref,
                 rcs.name as location,
                 so.warehouse_enter_no as warehouse_enter_no,
-                so.ready_date as ready_date,
+                so.date_order as ready_date,
                 sq.quantity as quantity,
                 sq.reserved_quantity as reserved_quantity,
                 so.invoice_no as invoice,
@@ -102,7 +102,7 @@ class StockQuantPending(models.Model):
                 '' as awb,
                 '' as departure_date,
                 '' as ref,
-                so.date_order as arrival_date
+                so.arrival_date as arrival_date
             from
                 stock_quant as sq
             left join stock_location sl2 on
@@ -195,7 +195,7 @@ class StockQuantPending(models.Model):
                 so.owner_ref as owner_ref,
                 rcs.name as location,
                 so.warehouse_enter_no as warehouse_enter_no,
-                so.ready_date as ready_date,
+                so.date_order as ready_date,
                 sq.quantity as quantity,
                 sq.reserved_quantity as reserved_quantity,
                 so.invoice_no as invoice,
@@ -204,7 +204,7 @@ class StockQuantPending(models.Model):
                 '' as awb,
                 '' as departure_date,
                 '' as ref,
-                so.date_order as arrival_date
+                so.arrival_date as arrival_date
             from
                 stock_quant as sq
             left join stock_location sl2 on
@@ -239,7 +239,7 @@ class StockQuantPending(models.Model):
                 so.owner_ref as owner_ref,
                 rcs.name as location,
                 so.warehouse_enter_no as warehouse_enter_no,
-                so.ready_date as ready_date,
+                so.date_order as ready_date,
                 sq.quantity as quantity,
                 sq.reserved_quantity as reserved_quantity,
                 so.invoice_no as invoice,
@@ -248,7 +248,7 @@ class StockQuantPending(models.Model):
                 '' as awb,
                 '' as departure_date,
                 '' as ref,
-                so.date_order as arrival_date
+                so.arrival_date as arrival_date
             from
                 stock_quant as sq
             left join stock_location sl2 on

@@ -39,8 +39,6 @@ class SaleOrder(models.Model):
     email = fields.Char('E-mail', tracking=True)
     invoice_no = fields.Char('Invoice No', tracking=True)
     owner_ref = fields.Char('Owner Ref', tracking=True)
-    ready_date = fields.Date('Ready Date', tracking=True)
-    delivery_date = fields.Date('Delivery Date', tracking=True)
     invoice_date = fields.Date('Invoice Date', tracking=True)
     location_id = fields.Many2one('res.country.state', string='State', tracking=True)
     package_list = fields.One2many('vessel.package.list', 'order_id', string='Package List')
@@ -52,6 +50,12 @@ class SaleOrder(models.Model):
     awb = fields.Char('Awb')
     departure_date = fields.Date('Departure Date')
     ref = fields.Char('Ref')
+    arrival_date = fields.Date('Arrival Date')
+    date_order = fields.Datetime(
+        string="Ready Date",
+        required=True, copy=False,
+        help="Creation date of draft/sent orders,\nConfirmation date of confirmed orders.",
+        default=fields.Datetime.now)
 
     def action_cancel(self):
         if any([[p.state == 'done' for p in self.picking_ids]]):
@@ -392,6 +396,9 @@ class SaleOrder(models.Model):
         self.get_set_product_production_lot()
         # 设置Package
         self.get_set_product_package()
+        self.write({
+            'arrival_date': fields.Date.today()
+        })
         return super().action_confirm()
 
 
@@ -419,7 +426,8 @@ class SaleOrderLine(models.Model):
     width = fields.Float('Width(cm)', required=True)
     height = fields.Float('Height(cm)', required=True)
 
-    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True)
+    volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True,
+                          digits='Vessel Package Volume')
     dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True)
 
     package_id = fields.Many2one('stock.quant.package', string='Package')
@@ -434,7 +442,7 @@ class SaleOrderLine(models.Model):
                 order_id.length,
                 order_id.width,
                 order_id.height)
-            order_id.volume = order_id.length * order_id.width * order_id.height
+            order_id.volume = (order_id.length * order_id.width * order_id.height) / (100 * 100 * 100)
 
     def _prepare_procurement_values(self, group_id=False):
         res = super(SaleOrderLine, self)._prepare_procurement_values(group_id=group_id)
@@ -526,7 +534,7 @@ class PackageList(models.Model):
     height = fields.Float('Height(cm)')
     cbm_pc = fields.Char('CBM/pc')
 
-    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True)
+    volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True)
     dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True)
 
     @api.depends('length', 'width', 'height')
@@ -536,4 +544,4 @@ class PackageList(models.Model):
                 order_id.length,
                 order_id.width,
                 order_id.height)
-            order_id.volume = order_id.length * order_id.width * order_id.height
+            order_id.volume = order_id.length * order_id.width * order_id.height / 100 * 100 * 100

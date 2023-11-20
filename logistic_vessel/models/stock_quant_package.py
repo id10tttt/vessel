@@ -13,7 +13,8 @@ class StockQuantPackage(models.Model):
     width = fields.Float('Width(cm)')
     height = fields.Float('Height(cm)')
 
-    volume = fields.Float('Volume(cm³)', compute='_compute_volume_and_dimensions', store=True)
+    volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True,
+                          digits='Vessel Package Volume')
     dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_dimensions_value', store=True)
 
     @api.depends('length', 'width', 'height')
@@ -23,4 +24,4 @@ class StockQuantPackage(models.Model):
                 package_id.length,
                 package_id.width,
                 package_id.height)
-            package_id.volume = package_id.length * package_id.width * package_id.height
+            package_id.volume = package_id.length * package_id.width * package_id.height / 100 * 100 * 100

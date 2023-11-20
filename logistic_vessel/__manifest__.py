@@ -8,6 +8,7 @@
     "depends": ["web", "sale", "stock", "sale_stock", "stock_account", "account"],
     "installable": True,
     'data': [
+        'data/volume_digits.xml',
         'data/notify_template.xml',
         'data/delivery_note_template.xml',
         'data/ir_sequence_data.xml',
