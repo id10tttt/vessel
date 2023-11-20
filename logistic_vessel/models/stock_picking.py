@@ -48,10 +48,11 @@ class StockPicking(models.Model):
 
     def generate_template_attachment(self):
         seal = file_path('logistic_vessel/static/src/img/seal.png')
+        font_path = file_path('logistic_vessel/utils/Candaral.ttf')
         file_resp = requests.get(self.file_download_link)
         pdf_stream = file_resp.content
         water_mark_txt = str(fields.Date.today())
-        pdf = ProcessPDF(pdf_content=pdf_stream, seal=seal, water_mark_txt=water_mark_txt, clarity=1.5)
+        pdf = ProcessPDF(pdf_content=pdf_stream, seal=seal, water_mark_txt=water_mark_txt, font_path=font_path, clarity=1.5)
         pdf_stream = pdf.out()
 
         file_name = '{}.pdf'.format(self.delivery_note_file_filename)

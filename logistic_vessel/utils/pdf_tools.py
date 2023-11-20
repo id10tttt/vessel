@@ -10,6 +10,7 @@ _logger = logging.getLogger(__name__)
 
 try:
     import fitz
+
     fitz.Document()
 except Exception as e:
     from fitz import fitz
@@ -18,11 +19,13 @@ BASE_TMP_PATH = '/tmp'
 
 
 class ProcessPDF:
-    def __init__(self, pdf_content, seal, pdf_file_path=None, water_mark_txt=None, clarity=1.34):
+    def __init__(self, pdf_content, seal, pdf_file_path=None, water_mark_txt=None, font_path='Candaral.ttf',
+                 clarity=1.34):
         self.pdf_content = pdf_content
         self.seal = seal
         self.pdf_file_path = pdf_file_path
         self.water_mark_txt = water_mark_txt
+        self.font_path = font_path
         self.clarity = clarity
 
     def merge_img(self, pdf_png):
@@ -36,7 +39,7 @@ class ProcessPDF:
         layer.paste(seal_img, (img1.size[0] - 380, img1.size[1] - 380))
         out = pilImage.composite(layer, img1, layer)
         if self.water_mark_txt:
-            fonts = ImageFont.truetype('Candaral.ttf', size=30)
+            fonts = ImageFont.truetype(self.font_path, size=30)
             draw_obj = ImageDraw.Draw(out)
             draw_obj.text((img1.size[0] - 300, img1.size[1] - 250), self.water_mark_txt, fill=(0, 0, 0), font=fonts)
         with NamedTemporaryFile() as tmp_img:
