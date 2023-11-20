@@ -3,12 +3,19 @@ from tempfile import NamedTemporaryFile
 from PIL import Image as pilImage
 from PIL import ImageDraw
 from PIL import ImageFont
+import os
+import logging
+
+_logger = logging.getLogger(__name__)
 
 try:
     import fitz
     fitz.Document()
 except Exception as e:
     from fitz import fitz
+
+BASE_TMP_PATH = '/tmp'
+
 
 class ProcessPDF:
     def __init__(self, pdf_content, seal, pdf_file_path=None, water_mark_txt=None, clarity=1.34):
@@ -33,7 +40,7 @@ class ProcessPDF:
             draw_obj = ImageDraw.Draw(out)
             draw_obj.text((img1.size[0] - 300, img1.size[1] - 250), self.water_mark_txt, fill=(0, 0, 0), font=fonts)
         with NamedTemporaryFile() as tmp_img:
-            tmp_img_name = '{}.png'.format(tmp_img)
+            tmp_img_name = '{}/{}.png'.format(BASE_TMP_PATH, tmp_img)
             out.save(tmp_img_name)
             return tmp_img_name, tmp_img
 
@@ -53,7 +60,7 @@ class ProcessPDF:
         trans = fitz.Matrix(zoom_x, zoom_y).prerotate(rotate)
         pm = page.get_pixmap(matrix=trans, alpha=False)
         with NamedTemporaryFile() as pdf_png:
-            pdf_png_name = '{}.png'.format(pdf_png)
+            pdf_png_name = '{}/{}.png'.format(BASE_TMP_PATH, pdf_png)
             pm._writeIMG(pdf_png_name, 1, jpg_quality=95)
         return pdf_png_name, pdf_png
 
@@ -74,6 +81,11 @@ class ProcessPDF:
         pdf_png_name, pdf_png = self.pdf_to_img()  # PDF转化为图片
         img_file_name, img_file = self.merge_img(pdf_png_name)  # 合并图片
         pdf_file = self.img_to_pdf(img_file_name)  # 图片转化为PDF
+        try:
+            os.unlink(pdf_png_name)
+            os.unlink(img_file_name)
+        except Exception as e:
+            _logger.error('删除文件出错: {}'.format(e))
         return pdf_file
 
 
