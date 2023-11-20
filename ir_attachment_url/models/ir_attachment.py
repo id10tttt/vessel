@@ -33,6 +33,17 @@ class IrAttachment(models.Model):
             and not r.name.startswith("/web/static/")
         )
 
+    # TODO: 不能获取到正确的名称
+    def get_picking_file_name(self, values):
+        if values.get('res_model') == 'stock.picking' and values.get('res_field') == 'delivery_note_file':
+            picking_id = self.env[values.get('res_model')].browse(values.get('res_id'))
+            if picking_id.delivery_note_file_filename:
+                return picking_id.delivery_note_file_filename
+            if values.get('name') == 'delivery_note_file':
+                return 'file'
+            return values.get('name')
+        return values.get('name')
+
     @api.model_create_multi
     def create(self, vals_list):
         url_fields = self.env.context.get("ir_attachment_url_fields")
@@ -61,7 +72,7 @@ class IrAttachment(models.Model):
             ):
                 values = self._check_contents(values)
                 data = values.pop("datas")
-                filename = values.get("name")
+                filename = self.get_picking_file_name(values)
                 mimetype = values.pop("mimetype")
                 values.update(
                     self._get_datas_related_values_with_bucket(
@@ -76,7 +87,7 @@ class IrAttachment(models.Model):
                 values = self._check_contents(values)
                 raws = values.pop("raws")
                 data = base64.b64encode(raws)
-                filename = values.get("name")
+                filename = self.get_picking_file_name(values)
                 mimetype = values.pop("mimetype")
                 values.update(
                     self._get_datas_related_values_with_bucket(

@@ -8,7 +8,6 @@ import base64
 from odoo.tools import float_compare
 from tempfile import NamedTemporaryFile
 from odoo.tools.misc import file_path
-from odoo.addons.mail.models.mail_thread import MailThread
 
 READONLY_FIELD_STATES = {
     state: [('readonly', True)]

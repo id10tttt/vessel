@@ -1,1 +1,4 @@
 oss2
+fitz
+frontend
+PyMuPDF

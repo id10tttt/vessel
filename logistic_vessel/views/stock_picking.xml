@@ -46,26 +46,33 @@
                 <xpath expr="//field[@name='picking_type_id']" position="before">
                     <field name="warehouse_enter_no"/>
                 </xpath>
-                <xpath expr="//field[@name='origin']" position="after">
-                    <field name="ref"/>
-                </xpath>
+<!--                <xpath expr="//field[@name='origin']" position="after">-->
+<!--                    <field name="ref"/>-->
+<!--                </xpath>-->
                 <xpath expr="//field[@name='date_done']" position="replace">
                     <field name="date_done" string="Arrival Date"/>
                 </xpath>
                 <xpath expr="//notebook" position="before">
                     <group>
                         <group>
-                            <field name="dest"/>
-                            <field name="arrival_date"/>
+                            <field name="delivery_note_file" widget="binary" filename="delivery_note_file_filename"/>
+                            <field name="delivery_note_file_filename" invisible="1"/>
+<!--                            <field name="dest"/>-->
+<!--                            <field name="arrival_date"/>-->
                         </group>
-                        <group>
-                            <field name="awb"/>
-                            <field name="departure_date"/>
-                        </group>
+<!--                        <group>-->
+<!--                            <field name="awb"/>-->
+<!--                            <field name="departure_date"/>-->
+<!--                        </group>-->
                     </group>
                 </xpath>
                 <xpath expr="//page[@name='operations']/button[@name='action_put_in_pack']" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='note']" position="replace">
+                    <page name="note_hs" string="申报要素">
+                        <field name="note" string="申报要素"/>
+                    </page>
                 </xpath>
                 <xpath expr="//page[@name='detailed_operations']/button[@name='action_put_in_pack']" position="attributes">
                     <attribute name="invisible">1</attribute>

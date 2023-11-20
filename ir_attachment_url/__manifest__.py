@@ -13,5 +13,11 @@
     "external_dependencies": {"python": [], "bin": []},
     "data": [
     ],
+    "assets": {
+        "web.assets_backend": [
+        ],
+        "web.assets_qweb": [
+        ],
+    },
     "installable": True,
 }

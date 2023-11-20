@@ -192,13 +192,12 @@ class IrAttachment(models.Model):
             return super(IrAttachment, self)._file_write_with_bucket(
                 bucket, bin_data, filename, mimetype, checksum
             )
-
         fname = hashlib.sha1(bin_data).hexdigest()
         file_name = self.get_file_name(filename, fname, mimetype=mimetype)
 
         self.upload_file_to_oss(bucket, file_name, bin_data)
 
-        obj_url = self._get_oss_object_url(bucket, file_name, 60 * 60 * 24)
+        obj_url = self._get_oss_object_url(bucket, file_name, timeout=60 * 60 * 24 * 30)
         return file_name, obj_url
 
     def _get_datas_related_values_with_bucket(self, bucket, data, filename, mimetype, checksum=None):
