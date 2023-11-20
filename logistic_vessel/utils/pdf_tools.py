@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-import fitz
 from tempfile import NamedTemporaryFile
 from PIL import Image as pilImage
 from PIL import ImageDraw
 from PIL import ImageFont
 
+try:
+    import fitz
+    fitz.Document()
+except Exception as e:
+    from fitz import fitz
 
 class ProcessPDF:
     def __init__(self, pdf_content, seal, pdf_file_path=None, water_mark_txt=None, clarity=1.34):
@@ -82,7 +86,7 @@ if __name__ == '__main__':
     seal: 公章路径
     clarity：可选参数，可以调整pdf清晰度，默认1.34，数值越大，清晰度越高
     """
-    seal = '/home/jx//vessel/logistic_vessel/static/src/img/seal.png'
-    pdf_file_path = fitz.open('/home/jx/Pictures/c/doc1.pdf')
+    seal = 'seal.png'
+    pdf_file_path = fitz.Document('doc1.pdf')
     pdf = ProcessPDF(file_name=pdf_file_path, pdf_content='', seal=seal, clarity=1)
     pdf_file = pdf.out()
