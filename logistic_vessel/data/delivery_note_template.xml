@@ -2,9 +2,9 @@
 <odoo>
     <data>
         <record id="mail_template_delivery_notes" model="mail.template">
-            <field name="name">{{ object.sale_id.delivery_title }} //签收单 {{ object.sale_id.owner_ref }}#</field>
+            <field name="name">{{ object.sale_id.delivery_title }} //签收单 {{ object.sale_id.owner_ref }}</field>
             <field name="model_id" ref="model_stock_picking"/>
-            <field name="subject">{{ object.sale_id.delivery_title }} //签收单 {{ object.sale_id.owner_ref }}#</field>
+            <field name="subject">{{ object.sale_id.delivery_title }} //签收单 {{ object.sale_id.owner_ref }}</field>
             <field name="email_from">{{ object.sale_id.create_uid.sudo().email }}</field>
             <field name="partner_to">{{ object.create_uid.id }}</field>
             <field name="email_to">{{ object.sale_id.email }}</field>

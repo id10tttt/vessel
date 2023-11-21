@@ -46,9 +46,9 @@
                 <xpath expr="//field[@name='picking_type_id']" position="before">
                     <field name="warehouse_enter_no"/>
                 </xpath>
-<!--                <xpath expr="//field[@name='origin']" position="after">-->
-<!--                    <field name="ref"/>-->
-<!--                </xpath>-->
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="method_id"/>
+                </xpath>
                 <xpath expr="//field[@name='date_done']" position="replace">
                     <field name="date_done" string="Arrival Date"/>
                 </xpath>

@@ -3,10 +3,10 @@
     <data>
         <record id="mail_template_sale_order_notify_chinese" model="mail.template">
 <!--            <field name="name">Release: M/V {{ object.mv.name }} - {{ object.partner_id.name }} - {{ object.client_order_ref }} - Your ref. {{ object.invoice_no }}, {{ object.warehouse_enter_no }}</field>-->
-            <field name="name">{{ object.delivery_title }} //进仓单 {{ object.owner_ref }}#</field>
+            <field name="name">{{ object.delivery_title }} //进仓单 {{ object.owner_ref }}</field>
             <field name="model_id" ref="model_sale_order"/>
 <!--            <field name="subject">Release: M/V {{ object.mv.name }} - {{ object.partner_id.name }} - {{ object.client_order_ref }} - Your ref. {{ object.invoice_no }}, {{ object.warehouse_enter_no }}</field>-->
-            <field name="subject">{{ object.delivery_title }} //进仓单 {{ object.owner_ref }}#</field>
+            <field name="subject">{{ object.delivery_title }} //进仓单 {{ object.owner_ref }}</field>
             <field name="email_from">{{ object.create_uid.sudo().email }}</field>
             <field name="partner_to">{{ object.create_uid.id }}</field>
             <field name="email_to">{{ object.email }}</field>
