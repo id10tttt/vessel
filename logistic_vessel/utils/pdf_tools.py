@@ -34,7 +34,8 @@ class ProcessPDF:
         """
         img1 = pilImage.open(pdf_png)  # PDF图片
         seal_img = pilImage.open(self.seal)  # 公司印章图片
-        seal_img = seal_img.resize((int(seal_img.size[0] * 0.6), int(seal_img.size[0] * 0.6)), pilImage.ANTIALIAS)
+        # 缩放seal
+        # seal_img = seal_img.resize((int(seal_img.size[0] * 0.6), int(seal_img.size[0] * 0.6)), pilImage.ANTIALIAS)
         layer = pilImage.new('RGBA', (img1.size[0], img1.size[1] - 200), (0, 0, 0, 0))
         layer.paste(seal_img, (img1.size[0] - 380, img1.size[1] - 380))
         out = pilImage.composite(layer, img1, layer)

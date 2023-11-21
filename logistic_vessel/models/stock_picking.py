@@ -52,8 +52,11 @@ class StockPicking(models.Model):
         file_resp = requests.get(self.file_download_link)
         pdf_stream = file_resp.content
         water_mark_txt = str(fields.Date.today())
-        pdf = ProcessPDF(pdf_content=pdf_stream, seal=seal, water_mark_txt=water_mark_txt, font_path=font_path, clarity=1.5)
-        pdf_stream = pdf.out()
+        try:
+            pdf = ProcessPDF(pdf_content=pdf_stream, seal=seal, water_mark_txt=water_mark_txt, font_path=font_path, clarity=1.5)
+            pdf_stream = pdf.out()
+        except Exception as e:
+            raise UserError('解析文件出现错误! {}'.format(e))
 
         file_name = '{}.pdf'.format(self.delivery_note_file_filename)
         stram_encode = base64.b64encode(pdf_stream)
