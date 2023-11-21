@@ -22,6 +22,8 @@ class SaleOrder(models.Model):
          'Order type and Owner Ref and Order state must unique!')
     ]
 
+    method_id = fields.Many2one('delivery.method', string='运输方式')
+    delivery_title = fields.Char('Delivery Note Title')
     order_type = fields.Selection([
         ('stock_in', u'入库订单'),
         ('stock_out', u'出库订单'),

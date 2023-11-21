@@ -7,3 +7,4 @@ from . import stock_move
 from . import stock_quant_package
 from . import stock_rule
 from . import stock_quant
+from . import delivery_method
