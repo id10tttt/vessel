@@ -25,7 +25,7 @@ class StockPicking(models.Model):
     delivery_note_file_filename = fields.Char('Delivery Note File Name')
     file_download_link = fields.Char('File Name', compute='_compute_file_download_link')
     warehouse_enter_no = fields.Char('Warehouse Enter No')
-    arrival_date = fields.Date('Arrival Date')
+    arrival_date = fields.Date('Arrival Date', default=fields.Date.today)
     dest = fields.Char('Dest')
     awb = fields.Char('Awb')
     departure_date = fields.Date('Departure Date')
