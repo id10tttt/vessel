@@ -80,7 +80,7 @@ class StockPicking(models.Model):
                 os.unlink(pdf_path)
             except Exception as e:
                 os.unlink(pdf_path)
-                raise UserError('解析文件出现错误! {}'.format(e))
+                raise UserError('Excel 解析文件出现错误! {}'.format(e))
         else:
             try:
                 # file_resp = requests.get(self.file_download_link)
@@ -91,7 +91,7 @@ class StockPicking(models.Model):
                                  clarity=1.5)
                 pdf_stream = pdf.out()
             except Exception as e:
-                raise UserError('解析文件出现错误! {}'.format(e))
+                raise UserError('Pdf/Image 解析文件出现错误! {}'.format(e))
 
         file_name = '{}.pdf'.format(self.delivery_note_file_filename)
         stram_encode = base64.b64encode(pdf_stream)
