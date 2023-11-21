@@ -104,5 +104,5 @@ if __name__ == '__main__':
     """
     seal = 'seal.png'
     pdf_file_path = fitz.Document('doc1.pdf')
-    pdf = ProcessPDF(file_name=pdf_file_path, pdf_content='', seal=seal, clarity=1)
+    pdf = ProcessPDF(pdf_file_path=pdf_file_path, pdf_content='', seal=seal, clarity=1)
     pdf_file = pdf.out()

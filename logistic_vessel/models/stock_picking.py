@@ -9,7 +9,6 @@ from odoo.tools.misc import file_path
 import time
 import hashlib
 from odoo.tools.mimetypes import guess_mimetype
-import requests
 import base64
 
 import logging
