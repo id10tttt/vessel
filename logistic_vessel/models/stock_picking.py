@@ -78,8 +78,12 @@ class StockPicking(models.Model):
                                  font_path=font_path,
                                  clarity=1.5)
                 pdf_stream = pdf.out()
+
+                # Delete tmp file
+                os.unlink(excel_file_path)
                 os.unlink(pdf_path)
             except Exception as e:
+                os.unlink(excel_file_path)
                 os.unlink(pdf_path)
                 raise UserError('Excel 解析文件出现错误! {}'.format(e))
         else:
