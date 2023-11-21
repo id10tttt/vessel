@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
+import os
+
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 from ..utils.pdf_tools import ProcessPDF
+from ..utils.excel_to_pdf import convert_excel_to_pdf
 from odoo.tools.misc import file_path
+import time
 import hashlib
-from io import BytesIO
+from odoo.tools.mimetypes import guess_mimetype
 import requests
 import base64
 
 import logging
 
+BASE_TMP_PATH = '/tmp'
 _logger = logging.getLogger(__name__)
 
 
@@ -49,14 +54,44 @@ class StockPicking(models.Model):
     def generate_template_attachment(self):
         seal = file_path('logistic_vessel/static/src/img/seal.png')
         font_path = file_path('logistic_vessel/utils/Candaral.ttf')
-        file_resp = requests.get(self.file_download_link)
-        pdf_stream = file_resp.content
-        water_mark_txt = str(fields.Date.today())
-        try:
-            pdf = ProcessPDF(pdf_content=pdf_stream, seal=seal, water_mark_txt=water_mark_txt, font_path=font_path, clarity=1.5)
-            pdf_stream = pdf.out()
-        except Exception as e:
-            raise UserError('解析文件出现错误! {}'.format(e))
+
+
+        mimetype = guess_mimetype(self.delivery_note_file)
+        if ('officedocument' in mimetype or
+                (mimetype == 'application/octet-stream' and 'xls' in self.delivery_note_file_filename)):
+
+            excel_file = str(time.time())
+            excel_file_path = '{}/{}.xlsx'.format(BASE_TMP_PATH, excel_file)
+            pdf_path = '{}/{}.pdf'.format(BASE_TMP_PATH, excel_file)
+            try:
+                decode_stream = base64.b64decode(self.delivery_note_file)
+                with open(excel_file_path, 'wb') as f:
+                    f.write(decode_stream)
+                    f.close()
+                pdf_path = convert_excel_to_pdf(excel_file_path, excel_file)
+
+                _logger.info('生成PDF 文件: {}'.format(pdf_path))
+                water_mark_txt = str(fields.Date.today())
+                pdf = ProcessPDF(pdf_content=None, pdf_file_path=pdf_path,
+                                 seal=seal, water_mark_txt=water_mark_txt,
+                                 font_path=font_path,
+                                 clarity=1.5)
+                pdf_stream = pdf.out()
+                os.unlink(pdf_path)
+            except Exception as e:
+                os.unlink(pdf_path)
+                raise UserError('解析文件出现错误! {}'.format(e))
+        else:
+            try:
+                # file_resp = requests.get(self.file_download_link)
+                # pdf_stream = file_resp.content
+                pdf_stream = base64.b64decode(self.delivery_note_file)
+                water_mark_txt = str(fields.Date.today())
+                pdf = ProcessPDF(pdf_content=pdf_stream, seal=seal, water_mark_txt=water_mark_txt, font_path=font_path,
+                                 clarity=1.5)
+                pdf_stream = pdf.out()
+            except Exception as e:
+                raise UserError('解析文件出现错误! {}'.format(e))
 
         file_name = '{}.pdf'.format(self.delivery_note_file_filename)
         stram_encode = base64.b64encode(pdf_stream)
