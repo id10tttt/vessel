@@ -58,7 +58,8 @@ class StockPicking(models.Model):
 
         mimetype = guess_mimetype(self.delivery_note_file)
         if ('officedocument' in mimetype or
-                (mimetype == 'application/octet-stream' and 'xls' in self.delivery_note_file_filename)):
+                (mimetype == 'application/octet-stream' and 'xls' in self.delivery_note_file_filename) or
+                (mimetype == 'text/plain' and 'xls' in self.delivery_note_file_filename)):
 
             excel_file = str(time.time())
             excel_file_path = '{}/{}.xlsx'.format(BASE_TMP_PATH, excel_file)
