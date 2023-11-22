@@ -54,7 +54,7 @@
                     <div class="oe_title">
                         <h1 class="d-flex">
                             <field name="priority" widget="priority" class="me-3" invisible="name == 'FOX/'"/>
-                            <field name="name" readonly="state in ('done', 'cancel')"/>
+                            <field name="name" readonly="True"/>
                         </h1>
                     </div>
                 </xpath>
