@@ -21,8 +21,7 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     method_id = fields.Many2one('delivery.method', string='运输方式')
-    pick_up = fields.Char('Pick up')
-    pick_up_charge = fields.Char('Pick Up Charge')
+    pick_up_charge = fields.Float('Pick Up Charge', digits='Pick Up Charge', default=0.0)
     delivery_note_file = fields.Binary('Delivery Note File', attachment=True)
     delivery_note_file_filename = fields.Char('Delivery Note File Name')
     file_download_link = fields.Char('File Name', compute='_compute_file_download_link')

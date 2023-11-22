@@ -40,8 +40,8 @@ class SaleOrder(models.Model):
     owner_id = fields.Many2one('res.partner', string='Owner', tracking=True)
     email = fields.Char('E-mail', tracking=True)
     invoice_no = fields.Char('Invoice No', tracking=True)
-    owner_ref = fields.Char('Owner Ref', tracking=True)
-    invoice_date = fields.Date('Invoice Date', tracking=True)
+    owner_ref = fields.Char('Owner Ref', tracking=True, copy=False)
+    invoice_date = fields.Date('Invoice Date', tracking=True, copy=False)
     location_id = fields.Many2one('res.country.state', string='State', tracking=True)
     package_list = fields.One2many('vessel.package.list', 'order_id', string='Package List')
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_warehouse_no', store=True)
@@ -424,9 +424,9 @@ class SaleOrderLine(models.Model):
     product_lot_id = fields.Many2one('stock.lot', string=u'批次')
     gross_weight_pc = fields.Float('Gross Weight(KG/pc)', required=True, default='0.0')
 
-    length = fields.Float('Length(cm)', required=True)
-    width = fields.Float('Width(cm)', required=True)
-    height = fields.Float('Height(cm)', required=True)
+    length = fields.Float('Length(cm)', required=True, default=0.0, digits='Vessel Package Volume')
+    width = fields.Float('Width(cm)', required=True, default=0.0, digits='Vessel Package Volume')
+    height = fields.Float('Height(cm)', required=True, default=0.0, digits='Vessel Package Volume')
 
     volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True,
                           digits='Vessel Package Volume')

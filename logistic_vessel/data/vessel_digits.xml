@@ -5,5 +5,9 @@
             <field name="name">Vessel Package Volume</field>
             <field name="digits" eval="4"/>
         </record>
+        <record forcecreate="True" id="decimal_pick_up_charge" model="decimal.precision">
+            <field name="name">Pick Up Charge</field>
+            <field name="digits" eval="1"/>
+        </record>
     </data>
 </odoo>
