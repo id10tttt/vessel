@@ -22,6 +22,7 @@ class SaleOrder(models.Model):
          'Order type and Owner Ref and Order state must unique!')
     ]
 
+    client_order_ref = fields.Char(string="Your Ref", copy=False)
     method_id = fields.Many2one('delivery.method', string='运输方式')
     delivery_title = fields.Char('邮件标题')
     order_type = fields.Selection([
