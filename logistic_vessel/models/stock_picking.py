@@ -36,6 +36,22 @@ class StockPicking(models.Model):
     departure_date = fields.Date('Departure Date')
     ref = fields.Char('Ref')
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            defaults = self.default_get(['name', 'picking_type_id'])
+            picking_type = self.env['stock.picking.type'].browse(
+                vals.get('picking_type_id', defaults.get('picking_type_id')))
+            if (vals.get('name', '/') == '/' and defaults.get('name', '/') == '/' and
+                    vals.get('picking_type_id', defaults.get('picking_type_id'))):
+                if picking_type.sequence_id:
+                    vals['name'] = picking_type.sequence_id.next_by_id()
+            if (vals.get('name', 'FOX/') == 'FOX/' and defaults.get('name', 'FOX/') == 'FOX/' and
+                    vals.get('picking_type_id', defaults.get('picking_type_id'))):
+                if picking_type.sequence_id:
+                    vals['name'] = picking_type.sequence_id.next_by_id()
+        return super().create(vals_list)
+
     @api.onchange('delivery_note_file', 'delivery_note_file_filename')
     def _compute_file_download_link(self):
         for line_id in self:
@@ -59,7 +75,6 @@ class StockPicking(models.Model):
     def generate_template_attachment(self):
         seal = file_path('logistic_vessel/static/src/img/seal.png')
         font_path = file_path('logistic_vessel/utils/Candaral.ttf')
-
 
         mimetype = guess_mimetype(self.delivery_note_file)
         if ('officedocument' in mimetype or
