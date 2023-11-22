@@ -8,11 +8,11 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="warehouse_enter_no"/>
-                    <field name="ref"/>
-                    <field name="dest"/>
-                    <field name="awb"/>
+<!--                    <field name="ref"/>-->
+<!--                    <field name="dest"/>-->
+<!--                    <field name="awb"/>-->
                     <field name="arrival_date"/>
-                    <field name="departure_date"/>
+<!--                    <field name="departure_date"/>-->
                 </xpath>
             </field>
         </record>
@@ -26,11 +26,12 @@
                 </xpath>
                 <xpath expr="//tree/field[@name='origin']" position="after">
                     <field name="warehouse_enter_no" optional="show"/>
-                    <field name="ref" optional="show"/>
-                    <field name="dest" optional="show"/>
-                    <field name="awb" optional="show"/>
+<!--                    <field name="ref" optional="show"/>-->
+<!--                    <field name="dest" optional="show"/>-->
+<!--                    <field name="awb" optional="show"/>-->
                     <field name="arrival_date" optional="show"/>
-                    <field name="departure_date" optional="show"/>
+                    <field name="pick_up_charge" optional="show"/>
+<!--                    <field name="departure_date" optional="show"/>-->
                 </xpath>
             </field>
         </record>

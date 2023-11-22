@@ -43,7 +43,6 @@ class SaleOrder(models.Model):
     owner_ref = fields.Char('Owner Ref', tracking=True, copy=False)
     invoice_date = fields.Date('Invoice Date', tracking=True, copy=False)
     location_id = fields.Many2one('res.country.state', string='State', tracking=True)
-    package_list = fields.One2many('vessel.package.list', 'order_id', string='Package List')
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_warehouse_no', store=True)
 
     message_attachment_urls = fields.Char('Attachment Url', compute='_compute_message_attachment_urls')
@@ -392,8 +391,9 @@ class SaleOrder(models.Model):
                 package_id = self.get_stock_quant_package_id(package_data)
                 order_line_id.package_id = package_id
 
-    # 确认订单时，创建服务费用
     def action_confirm(self):
+        # 如果没有明细，生成一个缺省值
+        self.action_set_default_order_line()
         # 设置批次
         self.get_set_product_production_lot()
         # 设置Package
@@ -402,6 +402,30 @@ class SaleOrder(models.Model):
             'arrival_date': fields.Date.today()
         })
         return super().action_confirm()
+
+    def get_default_product_id(self):
+        default_product_id = self.env['product.product'].sudo().search([
+            ('default_code', '=', '000000')
+        ])
+        if not default_product_id:
+            return False
+        return default_product_id.id
+
+    def action_set_default_order_line(self):
+        default_product_id = self.get_default_product_id()
+        for order_id in self:
+            if order_id.order_line:
+                continue
+
+            if not default_product_id:
+                raise ValidationError('没有找到对应的产品, 产品编码: 000000')
+            data = {
+                'product_id': default_product_id,
+                'product_uom_qty': 1
+            }
+            order_id.write({
+                'order_line': [(0, 0, data)]
+            })
 
 
 class SaleOrderLine(models.Model):
@@ -516,34 +540,3 @@ class SaleOrderLine(models.Model):
                 # Trigger the Scheduler for Pickings
                 pickings_to_confirm.action_confirm()
         return True
-
-
-class PackageList(models.Model):
-    _name = 'vessel.package.list'
-    _description = 'vessel Package'
-
-    order_id = fields.Many2one('sale.order', string='Order')
-    name = fields.Char('Description', required=False)
-    qty = fields.Float('Qty(pcs)', required=True)
-    gross_weight_pc = fields.Float('Gross Weight(KG/pc)')
-    gross_weight_kgs = fields.Float('Gross Weight(KGS)')
-
-    net_weight_pc = fields.Float('Net Weight(KG/pc)')
-    net_weight_kgs = fields.Float('Net Weight(KGS)')
-
-    length = fields.Float('Length(cm)')
-    width = fields.Float('Width(cm)')
-    height = fields.Float('Height(cm)')
-    cbm_pc = fields.Char('CBM/pc')
-
-    volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True)
-    dimensions = fields.Char('Dimensions(LxMxH cm)', compute='_compute_volume_and_dimensions', store=True)
-
-    @api.depends('length', 'width', 'height')
-    def _compute_volume_and_dimensions(self):
-        for order_id in self:
-            order_id.dimensions = '{} x {} x {} cm'.format(
-                order_id.length,
-                order_id.width,
-                order_id.height)
-            order_id.volume = order_id.length * order_id.width * order_id.height / 100 * 100 * 100
