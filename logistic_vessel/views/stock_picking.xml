@@ -7,6 +7,7 @@
             <field name="inherit_id" ref="stock.view_picking_internal_search"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='origin']" position="after">
+                    <field name="receipt_order"/>
                     <field name="warehouse_enter_no"/>
 <!--                    <field name="ref"/>-->
 <!--                    <field name="dest"/>-->
@@ -26,6 +27,7 @@
                 </xpath>
                 <xpath expr="//tree/field[@name='origin']" position="after">
                     <field name="warehouse_enter_no" optional="show"/>
+                    <field name="receipt_order"/>
 <!--                    <field name="ref" optional="show"/>-->
 <!--                    <field name="dest" optional="show"/>-->
 <!--                    <field name="awb" optional="show"/>-->
@@ -45,6 +47,7 @@
                             class="oe_highlight" data-hotkey="g"/>
                 </xpath>
                 <xpath expr="//field[@name='picking_type_id']" position="before">
+                    <field name="receipt_order"/>
                     <field name="warehouse_enter_no"/>
                 </xpath>
                 <xpath expr="//div[@class='oe_title']" position="replace">

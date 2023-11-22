@@ -24,6 +24,7 @@ class StockPicking(models.Model):
         '参考号', default='FOX/', required=True,
         copy=False, index='trigram', readonly=False)
 
+    receipt_order = fields.Char('回单')
     method_id = fields.Many2one('delivery.method', string='运输方式')
     pick_up_charge = fields.Float('Pick Up Charge', digits='Pick Up Charge', default=0.0)
     delivery_note_file = fields.Binary('Delivery Note File', attachment=True)
