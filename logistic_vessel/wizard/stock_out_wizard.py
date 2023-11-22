@@ -39,9 +39,12 @@ class SaleQuantOut(models.TransientModel):
             data.append((0, 0, {
                 'product_id': default_product_id.id,
                 'product_uom_qty': line_id.qty,
+                'gross_weight_pc': line_id.package_id.gross_weight_pc,
                 'length': line_id.package_id.length,
                 'width': line_id.package_id.width,
                 'height': line_id.package_id.height,
+                'package_id': line_id.package_id.id,
+                'assign_package': True
             }))
         return data
 

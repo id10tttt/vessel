@@ -265,6 +265,7 @@
                         <field name="company_id" column_invisible="True"/>
                         <field name="hs_code" optional="hide"/>
                         <field name="declaration" optional="hide"/>
+                        <field name="assign_package" optional="hide"/>
                     </tree>
                 </xpath>
             </field>

@@ -379,6 +379,9 @@ class SaleOrder(models.Model):
                 if order_line_id.product_type == 'service' or order_line_id.product_id.tracking != 'lot':
                     continue
 
+                if order_line_id.assign_package and order_line_id.package_id:
+                    continue
+
                 package_name = '{}#{}{}{}'.format(owner_ref_lot, order_line_id.length, order_line_id.width,
                                                   order_line_id.height)
 
@@ -460,6 +463,8 @@ class SaleOrderLine(models.Model):
 
     hs_code = fields.Char('HS Code')
     declaration = fields.Char('Customs declaration')
+
+    assign_package = fields.Boolean('Assign Package', default=False, copy=False)
 
     @api.depends('length', 'width', 'height')
     def _compute_volume_and_dimensions(self):
