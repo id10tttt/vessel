@@ -50,7 +50,7 @@
                     <div class="oe_title">
                         <h1 class="d-flex">
                             <field name="priority" widget="priority" class="me-3" invisible="name == 'FOX/'"/>
-                            <field name="name"/>
+                            <field name="name" readonly="state in ('done', 'cancel')"/>
                         </h1>
                     </div>
                 </xpath>
