@@ -2,11 +2,8 @@
 from odoo import models, fields, api
 
 
-class StockQuantPackage(models.Model):
-    _inherit = 'stock.quant.package'
-    _sql_constraints = [
-        ('unique_name', 'unique(name)', 'Package name must unique!')
-    ]
+class StockMoveLine(models.Model):
+    _inherit = 'stock.move.line'
 
     gross_weight_pc = fields.Float('Gross Weight(KG/pc)')
     length = fields.Float('Length(cm)', digits='Vessel Package Volume')

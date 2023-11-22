@@ -175,3 +175,35 @@ class StockPicking(models.Model):
         """
         self.ensure_one()
         return self.env.ref('logistic_vessel.mail_template_delivery_notes', raise_if_not_found=False)
+
+    def parse_stock_quant_package_data(self, move_line_id):
+        data = {
+            'name': '{}#{}'.format(move_line_id.picking_id.sale_id.owner_ref if move_line_id.picking_id.sale_id else '',
+                                   move_line_id.id),
+            'gross_weight_pc': move_line_id.gross_weight_pc,
+            'length': move_line_id.length,
+            'width': move_line_id.width,
+            'height': move_line_id.height,
+        }
+        return data
+
+    def set_correct_product_package(self):
+        package_obj = self.env['stock.quant.package']
+        for picking_id in self:
+            if picking_id.sale_id and picking_id.sale_id.order_type != 'stock_in':
+                continue
+            for move_line_id in picking_id.move_line_ids:
+                package_data = self.parse_stock_quant_package_data(move_line_id)
+                package_id = package_obj.search([
+                    ('name', '=', package_data.get('name'))
+                ])
+                if not package_id:
+                    # 创建新的记录
+                    package_id = package_obj.create(package_data)
+                    _logger.info('生成package: {}'.format(package_id))
+                if package_id:
+                    move_line_id.result_package_id = package_id
+
+    def button_validate(self):
+        self.set_correct_product_package()
+        return super().button_validate()
