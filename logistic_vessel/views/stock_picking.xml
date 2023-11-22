@@ -46,11 +46,22 @@
                 <xpath expr="//field[@name='picking_type_id']" position="before">
                     <field name="warehouse_enter_no"/>
                 </xpath>
+                <xpath expr="//div[@class='oe_title']" position="replace">
+                    <div class="oe_title">
+                        <h1 class="d-flex">
+                            <field name="priority" widget="priority" class="me-3" invisible="name == 'FOX/'"/>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                </xpath>
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="pick_up_charge"/>
                     <field name="method_id"/>
                 </xpath>
                 <xpath expr="//field[@name='date_deadline']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='picking_type_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='scheduled_date']" position="attributes">

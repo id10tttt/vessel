@@ -20,6 +20,10 @@ _logger = logging.getLogger(__name__)
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
+    name = fields.Char(
+        '参考号', default='FOX/', required=True,
+        copy=False, index='trigram', readonly=False)
+
     method_id = fields.Many2one('delivery.method', string='运输方式')
     pick_up_charge = fields.Float('Pick Up Charge', digits='Pick Up Charge', default=0.0)
     delivery_note_file = fields.Binary('Delivery Note File', attachment=True)
