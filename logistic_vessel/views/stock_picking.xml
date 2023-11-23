@@ -9,11 +9,7 @@
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="receipt_order"/>
                     <field name="warehouse_enter_no"/>
-<!--                    <field name="ref"/>-->
-<!--                    <field name="dest"/>-->
-<!--                    <field name="awb"/>-->
                     <field name="arrival_date"/>
-<!--                    <field name="departure_date"/>-->
                 </xpath>
             </field>
         </record>
@@ -28,12 +24,8 @@
                 <xpath expr="//tree/field[@name='origin']" position="after">
                     <field name="warehouse_enter_no" optional="show"/>
                     <field name="receipt_order"/>
-<!--                    <field name="ref" optional="show"/>-->
-<!--                    <field name="dest" optional="show"/>-->
-<!--                    <field name="awb" optional="show"/>-->
                     <field name="arrival_date" optional="show"/>
                     <field name="pick_up_charge" optional="show"/>
-<!--                    <field name="departure_date" optional="show"/>-->
                 </xpath>
             </field>
         </record>
@@ -79,13 +71,7 @@
                         <group>
                             <field name="delivery_note_file" widget="binary" filename="delivery_note_file_filename"/>
                             <field name="delivery_note_file_filename" invisible="1"/>
-<!--                            <field name="dest"/>-->
-<!--                            <field name="arrival_date"/>-->
                         </group>
-<!--                        <group>-->
-<!--                            <field name="awb"/>-->
-<!--                            <field name="departure_date"/>-->
-<!--                        </group>-->
                     </group>
                 </xpath>
                 <xpath expr="//page[@name='operations']/button[@name='action_put_in_pack']" position="attributes">
@@ -96,9 +82,70 @@
                         <field name="note" string="申报要素"/>
                     </page>
                 </xpath>
-                <xpath expr="//page[@name='detailed_operations']/button[@name='action_put_in_pack']" position="attributes">
+                <xpath expr="//page[@name='detailed_operations']/button[@name='action_put_in_pack']"
+                       position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//page[@name='detailed_operations']" position="before">
+                    <page string="Packing List"
+                          name="detailed_operations"
+                          invisible="show_operations">
+                        <field name="move_line_ids_without_package"
+                               readonly="show_operations or state == 'cancel' or (state == 'done' and is_locked)"
+                               context="{'tree_view_ref': 'logistic_vessel.view_stock_move_line_detailed_operation_vessel_tree', 'default_picking_id': id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id, 'default_company_id': company_id}"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_stock_move_line_detailed_operation_vessel_tree" model="ir.ui.view">
+            <field name="name">stock.move.line.operations.tree</field>
+            <field name="model">stock.move.line</field>
+            <field name="priority">1000</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" decoration-muted="(state == 'done' and is_locked == True)">
+                    <field name="product_id" context="{'default_detailed_type': 'product'}" required="1"
+                           column_invisible="True"
+                           readonly="state == 'done' or move_id"/>
+                    <field name="company_id" column_invisible="True"/>
+                    <field name="move_id" column_invisible="True"/>
+                    <field name="picking_id" column_invisible="True"/>
+                    <field name="product_uom_category_id" column_invisible="True"/>
+                    <field name="package_id" column_invisible="True"/>
+                    <field name="result_package_id" column_invisible="True"/>
+                    <field name="location_id" column_invisible="True"/>
+                    <field name="location_dest_id" column_invisible="True"/>
+                    <field name="lot_id" groups="stock.group_production_lot" column_invisible="parent.show_lots_text"
+                           invisible="not lots_visible"
+                           context="{'default_product_id': product_id, 'default_company_id': company_id, 'active_picking_id': picking_id}"
+                           optional="hide"/>
+                    <field name="lot_name" groups="stock.group_production_lot" optional="hide"
+                           required="True"
+                           column_invisible="not parent.show_lots_text" invisible="not lots_visible"
+                           context="{'default_product_id': product_id}"/>
+                    <field name="location_id" options="{'no_create': True}" optional="hide"
+                           column_invisible="parent.picking_type_code == 'incoming'"
+                           groups="stock.group_stock_multi_locations"
+                           domain="[('id', 'child_of', parent.location_id), '|', ('company_id', '=', False), ('company_id', '=', company_id), ('usage', '!=', 'view')]"/>
+                    <field name="location_dest_id" options="{'no_create': True}"
+                           column_invisible="parent.picking_type_code == 'outgoing'"
+                           groups="stock.group_stock_multi_locations" optional="hide"
+                           domain="[('id', 'child_of', parent.location_dest_id), '|', ('company_id', '=', False), ('company_id', '=', company_id), ('usage', '!=', 'view')]"/>
+                    <field name="gross_weight_pc"/>
+                    <field name="length"/>
+                    <field name="width"/>
+                    <field name="height"/>
+                    <field name="volume"/>
+                    <field name="package_id" groups="stock.group_tracking_lot" column_invisible="True"/>
+                    <field name="result_package_id" groups="stock.group_tracking_lot" column_invisible="True"/>
+                    <field name="lots_visible" column_invisible="True"/>
+                    <field name="owner_id" groups="stock.group_tracking_owner"
+                           column_invisible="parent.picking_type_code == 'incoming'"/>
+                    <field name="state" column_invisible="True"/>
+                    <field name="is_locked" column_invisible="True"/>
+                    <field name="quantity" readonly="state in ('done', 'cancel') and is_locked" force_save="1"/>
+                    <field name="product_uom_id" force_save="1" readonly="state != 'draft' and id"
+                           groups="uom.group_uom"/>
+                </tree>
             </field>
         </record>
         <record id="view_stock_move_line_operation_tree_inherit" model="ir.ui.view">

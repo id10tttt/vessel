@@ -22,3 +22,15 @@ class StockMoveLine(models.Model):
                 package_id.width,
                 package_id.height)
             package_id.volume = (package_id.length * package_id.width * package_id.height) / (100 * 100 * 100)
+
+    @api.onchange('length', 'width', 'height')
+    def _onchange_set_default_product_info(self):
+        for line_id in self:
+            picking_id = self.picking_id
+            if not picking_id:
+                continue
+            move_id = picking_id.move_ids
+            if not move_id:
+                continue
+            line_id.product_id = move_id[0].product_id.id
+            line_id.lot_name = move_id[0].lot_name
