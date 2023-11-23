@@ -492,16 +492,17 @@ class StockQuantPending(models.Model):
         mv_ids = self.mv
         if len(set(mv_ids)) != 1:
             raise UserError('不允许选择多个M/V')
-        if len(set(self.mapped('owner_ref'))) != 1:
-            raise UserError('不允许选择多个Owner Ref#')
+        # if len(set(self.mapped('owner_ref'))) != 1:
+        #     raise UserError('不允许选择多个Owner Ref#')
         out_data = {
             'mv': mv_ids[0].id,
-            'owner_ref': self[0].owner_ref
+            'owner_ref': ','.join(x.owner_ref for x in self)
         }
         line_data = []
         for quant_id in self:
             line_data.append((0, 0, {
                 'package_id': quant_id.package_id.id or False,
+                'lot_id': quant_id.lot_id.id or False,
                 'qty': quant_id.quantity,
                 'weight': quant_id.weight,
                 'volume': quant_id.volume,

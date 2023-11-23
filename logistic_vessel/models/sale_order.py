@@ -336,6 +336,10 @@ class SaleOrder(models.Model):
                 if order_line_id.product_type == 'service' or order_line_id.product_id.tracking != 'lot':
                     continue
 
+                # 由 Pending 创建
+                if order_line_id.assign_lot and order_line_id.product_lot_id and line_id.order_type == 'stock_out':
+                    continue
+
                 if order_line_id.product_lot_id:
                     lot_name = owner_ref_lot
                     if order_line_id.product_lot_id.name == lot_name:
@@ -465,6 +469,7 @@ class SaleOrderLine(models.Model):
     declaration = fields.Char('Customs declaration')
 
     assign_package = fields.Boolean('Assign Package', default=False, copy=False)
+    assign_lot = fields.Boolean('Assign Lot', default=False, copy=False)
 
     @api.depends('length', 'width', 'height')
     def _compute_volume_and_dimensions(self):

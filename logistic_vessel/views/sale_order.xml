@@ -265,6 +265,7 @@
                         <field name="hs_code" optional="hide"/>
                         <field name="declaration" optional="hide"/>
                         <field name="assign_package" optional="hide"/>
+                        <field name="assign_lot" optional="hide"/>
                     </tree>
                 </xpath>
             </field>

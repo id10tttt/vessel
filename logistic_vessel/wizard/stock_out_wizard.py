@@ -43,8 +43,10 @@ class SaleQuantOut(models.TransientModel):
                 'length': line_id.package_id.length,
                 'width': line_id.package_id.width,
                 'height': line_id.package_id.height,
+                'product_lot_id': line_id.lot_id.id,
                 'package_id': line_id.package_id.id,
-                'assign_package': True
+                'assign_package': True,
+                'assign_lot': True,
             }))
         return data
 
@@ -77,6 +79,7 @@ class SaleQuantOutLine(models.TransientModel):
 
     wizard_id = fields.Many2one('stock.quant.stock.out.wizard', string='Out Wizard')
     package_id = fields.Many2one('stock.quant.package', string='Package')
+    lot_id = fields.Many2one('stock.lot', string='Lots')
     qty = fields.Float('Qty')
     weight = fields.Float('Weight')
     volume = fields.Float('Volume')
