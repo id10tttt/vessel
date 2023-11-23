@@ -42,14 +42,6 @@
                     <field name="receipt_order"/>
                     <field name="warehouse_enter_no"/>
                 </xpath>
-                <xpath expr="//div[@class='oe_title']" position="replace">
-                    <div class="oe_title">
-                        <h1 class="d-flex">
-                            <field name="priority" widget="priority" class="me-3" invisible="name == 'FOX/'"/>
-                            <field name="name" readonly="True"/>
-                        </h1>
-                    </div>
-                </xpath>
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="pick_up_charge"/>
                     <field name="method_id"/>

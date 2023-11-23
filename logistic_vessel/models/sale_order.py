@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 import xlsxwriter
 from io import BytesIO
@@ -9,10 +9,13 @@ from odoo.tools import float_compare
 from tempfile import NamedTemporaryFile
 from odoo.tools.misc import file_path
 
-READONLY_FIELD_STATES = {
-    state: [('readonly', True)]
-    for state in {'sale', 'done', 'cancel'}
-}
+
+SALE_ORDER_STATE = [
+    ('draft', "出仓单"),
+    ('sent', "已发送出仓单"),
+    ('sale', "销售订单"),
+    ('cancel', "已取消"),
+]
 
 
 class SaleOrder(models.Model):
@@ -21,6 +24,20 @@ class SaleOrder(models.Model):
         ('unique_type_owner_ref_state', 'unique(order_type,owner_ref,state)',
          'Order type and Owner Ref and Order state must unique!')
     ]
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('order_type') == 'stock_in':
+                if 'company_id' in vals:
+                    self = self.with_company(vals['company_id'])
+                seq_date = fields.Datetime.context_timestamp(
+                    self, fields.Datetime.to_datetime(vals['date_order'])
+                ) if 'date_order' in vals else None
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'sale.order.stock.in', sequence_date=seq_date) or _("New")
+
+        return super().create(vals_list)
 
     client_order_ref = fields.Char(string="Your Ref", copy=False)
     method_id = fields.Many2one('delivery.method', string='运输方式')
@@ -57,6 +74,17 @@ class SaleOrder(models.Model):
         required=True, copy=False,
         help="Creation date of draft/sent orders,\nConfirmation date of confirmed orders.",
         default=fields.Datetime.now)
+
+    stock_out_state = fields.Selection(
+        selection=SALE_ORDER_STATE,
+        string="状态",
+        copy=False, store=False,
+        compute='_compute_stock_out_state')
+
+    @api.depends('state')
+    def _compute_stock_out_state(self):
+        for order_id in self:
+            order_id.stock_out_state = order_id.state
 
     def action_cancel(self):
         if any([[p.state == 'done' for p in self.picking_ids]]):

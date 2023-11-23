@@ -11,8 +11,6 @@
                         <field name="name" string="单号" readonly="1" decoration-bf="1"/>
                         <field name="partner_id" readonly="1" string="Supplier"/>
                         <field name="mv"/>
-                        <!--                        <field name="invoice_no"/>-->
-                        <!--                        <field name="owner_id"/>-->
                         <field name="owner_ref"/>
                         <field name="client_order_ref"/>
                         <field name="team_id" optional="hide"/>
@@ -21,17 +19,19 @@
                         <!--                        <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>-->
                         <!--                        <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1"-->
                         <!--                               optional="show"/>-->
-                        <field name="currency_id" invisible="1"/>
-                        <field name="date_order" optional="show"/>
+                        <field name="currency_id" column_invisible="1"/>
+                        <field name="order_type" column_invisible="1"/>
+                        <field name="date_order" column_invisible="context.get('default_order_type') != 'stock_in'"/>
+                        <field name="date_order" string="出库日期" column_invisible="context.get('default_order_type') != 'stock_out'"/>
                         <field name="invoice_date" optional="show"/>
                         <field name="location_id" optional="show"/>
                         <field name="warehouse_enter_no" optional="show"/>
-                        <field name="state"/>
+                        <field name="state" column_invisible="context.get('default_order_type') != 'stock_in'"/>
+                        <field name="stock_out_state" column_invisible="context.get('default_order_type') != 'stock_out'"/>
                         <field name="dest" optional="hide"/>
                         <field name="awb" optional="hide"/>
                         <field name="departure_date" optional="hide"/>
                         <field name="ref" optional="hide"/>
-                        <!--                        <field name="method_id" optional="hide"/>-->
                         <field name="message_attachment_urls" optional="hide"/>
                     </tree>
                 </xpath>
@@ -50,6 +50,16 @@
                 <xpath expr="//header/button[@name='action_preview_sale_order']"
                        position="attributes">
                     <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//header/field[@name='state']"
+                       position="replace">
+                    <field name="order_type" invisible="1"/>
+                    <field name="state" widget="statusbar"
+                           invisible="order_type != 'stock_in'"
+                           statusbar_visible="draft,sent,sale"/>
+                    <field name="stock_out_state" widget="statusbar"
+                           invisible="order_type != 'stock_out'"
+                           statusbar_visible="draft,sent,sale"/>
                 </xpath>
                 <xpath expr="//field[@name='pricelist_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -75,15 +85,6 @@
                     <field name="departure_date" invisible="order_type in ('stock_in')"/>
                     <field name="ref" invisible="order_type in ('stock_in')"/>
                 </xpath>
-                <!--                <xpath expr="//field[@name='payment_term_id']" position="after">-->
-                <!--                    <field name="arrival_date" readonly="state != 'draft'"/>-->
-                <!--                    <field name="warehouse_enter_no" readonly="state != 'draft'"/>-->
-                <!--                    <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>-->
-                <!--                    <field name="warehouse_id" groups="base.group_no_one"/>-->
-                <!--                </xpath>-->
-                <!--                <xpath expr="//label[@for='date_order']" position="replace">-->
-                <!--                    <label for="date_order" string="Ready Date"/>-->
-                <!--                </xpath>-->
                 <xpath expr="//group[@name='order_details']" position="replace">
                     <group name="order_details">
                         <field name="validity_date" invisible="1" readonly="state in ['cancel', 'sale']"/>
@@ -96,21 +97,6 @@
                         <field name="has_active_pricelist" invisible="1"/>
                         <field name="show_update_pricelist" invisible="1"/>
                         <field name="pricelist_id" invisible="1"/>
-                        <!--                    <label for="pricelist_id"-->
-                        <!--                           groups="product.group_product_pricelist"-->
-                        <!--                           invisible="not has_active_pricelist"/>-->
-                        <!--                    <div groups="product.group_product_pricelist"-->
-                        <!--                         class="o_row"-->
-                        <!--                         invisible="not has_active_pricelist">-->
-                        <!--                        <field name="pricelist_id" options="{'no_open':True,'no_create': True}"-->
-                        <!--                               readonly="state in ['cancel', 'sale']"/>-->
-                        <!--                        <button name="action_update_prices" type="object"-->
-                        <!--                                string=" Update Prices"-->
-                        <!--                                help="Recompute all prices based on this pricelist"-->
-                        <!--                                class="btn-link mb-1 px-0" icon="fa-refresh"-->
-                        <!--                                confirm="This will update the unit price of all products based on the new pricelist."-->
-                        <!--                                invisible="not show_update_pricelist or state in ['sale', 'cancel']"/>-->
-                        <!--                    </div>-->
                         <field name="country_code" invisible="1"/>
                         <field name="company_id" invisible="1"/>
                         <field name="currency_id" invisible="1"/>
@@ -122,9 +108,10 @@
                         <!--                        <field name="method_id" readonly="state in ['cancel', 'sale']"/>-->
                     </group>
                 </xpath>
-                <!--                <xpath expr="//field[@name='validity_date']" position="attributes">-->
-                <!--                    <attribute name="invisible">1</attribute>-->
-                <!--                </xpath>-->
+                <xpath expr="//field[@name='date_order']" position="replace">
+                    <field name="date_order" invisible="order_type == 'stock_out'"/>
+                    <field name="date_order" string="出库日期" invisible="order_type == 'stock_in'"/>
+                </xpath>
                 <xpath expr="//notebook" position="attributes">
                     <attribute name="invisible">order_type == 'stock_in'</attribute>
                 </xpath>
