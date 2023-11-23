@@ -23,7 +23,6 @@
                         <field name="order_type" column_invisible="1"/>
                         <field name="date_order" column_invisible="context.get('default_order_type') != 'stock_in'"/>
                         <field name="date_order" string="出库日期" column_invisible="context.get('default_order_type') != 'stock_out'"/>
-                        <field name="invoice_date" optional="show"/>
                         <field name="location_id" optional="show"/>
                         <field name="warehouse_enter_no" optional="show"/>
                         <field name="state" column_invisible="context.get('default_order_type') != 'stock_in'"/>
@@ -285,15 +284,10 @@
                     <separator/>
                     <filter name="date_order" string="Ready Date"/>
                     <separator/>
-                    <filter string="当日订单" name="today_schedule_order"
-                            domain="[('invoice_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
-                    <separator/>
                     <group expand="0" string="Group By">
                         <filter string="Supplier" name="customer" domain="[]" context="{'group_by': 'partner_id'}"/>
                         <filter string="Ready Date" name="order_month" domain="[]"
                                 context="{'group_by': 'date_order'}"/>
-                        <filter string="Invoice Date" name="filter_invoice_date" domain="[]"
-                                context="{'group_by': 'invoice_date'}"/>
                         <filter string="订单类型" name="order_type" domain="[]" context="{'group_by': 'order_type'}"/>
                     </group>
                 </search>
