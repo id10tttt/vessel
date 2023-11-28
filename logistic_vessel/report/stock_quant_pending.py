@@ -60,7 +60,7 @@ class StockQuantPending(models.Model):
                 quant_id.location = None
                 quant_id.warehouse_enter_no = None
                 quant_id.ready_date = None
-                quant_id.arrival_date = valid_picking_id[0].date_done if valid_picking_id else None
+                quant_id.arrival_date = None
                 quant_id.invoice = None
                 quant_id.your_ref = None
 
