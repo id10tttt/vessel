@@ -501,6 +501,7 @@ class StockQuantPending(models.Model):
         line_data = []
         for quant_id in self:
             line_data.append((0, 0, {
+                'supplier_id': quant_id.supplier_id.id or False,
                 'package_id': quant_id.package_id.id or False,
                 'lot_id': quant_id.lot_id.id or False,
                 'qty': quant_id.quantity,

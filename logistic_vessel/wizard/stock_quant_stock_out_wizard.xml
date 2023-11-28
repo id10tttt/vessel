@@ -19,6 +19,7 @@
                             <page string="Line">
                                 <field name="line_ids">
                                     <tree>
+                                        <field name="supplier_id"/>
                                         <field name="lot_id"/>
                                         <field name="package_id"/>
                                         <field name="qty"/>

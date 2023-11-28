@@ -38,6 +38,7 @@ class SaleQuantOut(models.TransientModel):
         for line_id in self.line_ids:
             data.append((0, 0, {
                 'product_id': default_product_id.id,
+                'supplier_id': line_id.supplier_id.id,
                 'product_uom_qty': line_id.qty,
                 'gross_weight_pc': line_id.package_id.gross_weight_pc,
                 'length': line_id.package_id.length,
@@ -77,6 +78,7 @@ class SaleQuantOutLine(models.TransientModel):
     _name = 'stock.quant.stock.out.line'
     _description = '出库明细'
 
+    supplier_id = fields.Many2one('res.partner', string='Supplier')
     wizard_id = fields.Many2one('stock.quant.stock.out.wizard', string='Out Wizard')
     package_id = fields.Many2one('stock.quant.package', string='Package')
     lot_id = fields.Many2one('stock.lot', string='Lots')

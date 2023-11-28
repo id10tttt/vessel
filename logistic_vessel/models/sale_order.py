@@ -499,6 +499,8 @@ class SaleOrderLine(models.Model):
     assign_package = fields.Boolean('Assign Package', default=False, copy=False)
     assign_lot = fields.Boolean('Assign Lot', default=False, copy=False)
 
+    supplier_id = fields.Many2one('res.partner', string='Supplier')
+
     @api.depends('length', 'width', 'height')
     def _compute_volume_and_dimensions(self):
         for order_id in self:
