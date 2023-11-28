@@ -92,12 +92,12 @@ class SaleOrder(models.Model):
         return super().action_cancel()
 
     def _compute_message_attachment_urls(self):
-        attach_ids = self.env['ir.attachment'].search([
-            ('res_id', 'in', self.ids),
-            ('res_model', '=', self._name)
-        ])
         for record in self:
-            record.message_attachment_urls = '; '.join(x.url or '' for x in attach_ids) if attach_ids else ''
+            attach_ids = self.env['ir.attachment'].search([
+                ('res_id', 'in', record.ids),
+                ('res_model', '=', record._name)
+            ])
+            record.message_attachment_urls = '; '.join(x.url or '' for x in attach_ids if x.url) if attach_ids else ''
 
     @api.depends('owner_ref')
     def _compute_warehouse_no(self):

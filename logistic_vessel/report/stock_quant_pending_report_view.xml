@@ -50,6 +50,7 @@
             <field name="model">stock.quant.pending.report</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field name="id"/>
                     <field name="supplier_id"/>
                     <field name="mv"/>
                     <field name="owner_ref"/>

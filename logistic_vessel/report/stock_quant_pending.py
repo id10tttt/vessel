@@ -7,7 +7,7 @@ from odoo.exceptions import UserError
 class StockQuantPending(models.Model):
     _name = 'stock.quant.pending.report'
     _auto = False
-    _order = 'warehouse_enter_no'
+    _order = 'id desc, warehouse_enter_no'
 
     stock_in_order = fields.Many2one('sale.order', string='Stock IN')
     stock_out_order = fields.Many2one('sale.order', string='Stock OUT')
