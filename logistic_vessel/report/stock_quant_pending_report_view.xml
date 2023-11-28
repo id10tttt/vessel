@@ -24,7 +24,7 @@
                                 <field name="ready_date" readonly="1"/>
                                 <field name="arrival_date" readonly="1"/>
                                 <field name="invoice" readonly="1"/>
-                                <field name="so" readonly="1"/>
+                                <field name="your_ref" readonly="1"/>
                                 <field name="dest" readonly="1"/>
                                 <field name="awb" readonly="1"/>
                                 <field name="departure_date" readonly="1"/>
@@ -64,7 +64,7 @@
                     <field name="ready_date"/>
                     <field name="arrival_date"/>
                     <field name="invoice"/>
-                    <field name="so"/>
+                    <field name="your_ref"/>
                     <field name="dest"/>
                     <field name="awb"/>
                     <field name="departure_date"/>
@@ -94,7 +94,7 @@
                     <field name="ready_date"/>
                     <field name="arrival_date"/>
                     <field name="invoice"/>
-                    <field name="so"/>
+                    <field name="your_ref"/>
                     <field name="dest"/>
                     <field name="awb"/>
                     <field name="departure_date"/>
