@@ -7,7 +7,7 @@ from odoo.exceptions import UserError
 class StockQuantPending(models.Model):
     _name = 'stock.quant.pending.report'
     _auto = False
-    _order = 'id desc, warehouse_enter_no'
+    _order = 'id desc'
 
     stock_in_order = fields.Many2one('sale.order', string='Stock IN', compute='_compute_stock_in_order_info')
     stock_out_order = fields.Many2one('sale.order', string='Stock OUT', compute='_compute_stock_out_order_info')
@@ -122,8 +122,6 @@ class StockQuantPending(models.Model):
         mv_ids = self.mv
         if len(set(mv_ids)) != 1:
             raise UserError('不允许选择多个M/V')
-        # if len(set(self.mapped('owner_ref'))) != 1:
-        #     raise UserError('不允许选择多个Owner Ref#')
         out_data = {
             'mv': mv_ids[0].id,
             'owner_ref': ','.join(x.owner_ref for x in self)
