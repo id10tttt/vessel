@@ -62,7 +62,7 @@ class SaleOrder(models.Model):
     location_id = fields.Many2one('res.country.state', string='State', tracking=True)
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_warehouse_no', store=True)
 
-    message_attachment_urls = fields.Char('Attachment Url', compute='_compute_message_attachment_urls')
+    message_attachment_urls = fields.Char('Invoice Url', compute='_compute_message_attachment_urls')
 
     dest = fields.Char('Dest')
     awb = fields.Char('Awb')
@@ -91,13 +91,19 @@ class SaleOrder(models.Model):
             raise ValidationError('不允许取消')
         return super().action_cancel()
 
+    def generate_attachment_hyperlink(self, attach_ids):
+        if not attach_ids:
+            return ''
+        res = '&"\r\n"&'.join('HYPERLINK("{}", "{}")'.format(x.url, x.name) for x in attach_ids if x.url)
+        return '={}'.format(res)
+
     def _compute_message_attachment_urls(self):
         for record in self:
             attach_ids = self.env['ir.attachment'].search([
                 ('res_id', 'in', record.ids),
                 ('res_model', '=', record._name)
             ])
-            record.message_attachment_urls = '; '.join(x.url or '' for x in attach_ids if x.url) if attach_ids else ''
+            record.message_attachment_urls = self.generate_attachment_hyperlink(attach_ids)
 
     @api.depends('owner_ref')
     def _compute_warehouse_no(self):
