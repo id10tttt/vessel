@@ -5,7 +5,7 @@
             <field name="name">stock.quant.pending.report form</field>
             <field name="model">stock.quant.pending.report</field>
             <field name="arch" type="xml">
-                <form>
+                <form create="0">
                     <sheet>
                         <group>
                             <group>
@@ -51,7 +51,7 @@
             <field name="name">stock.quant.pending.report tree</field>
             <field name="model">stock.quant.pending.report</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree create="0">
                     <field name="id" optional="show"/>
                     <field name="supplier_id" optional="show"/>
                     <field name="mv" optional="show"/>
@@ -88,20 +88,7 @@
                 <search>
                     <field name="mv"/>
                     <field name="owner_ref"/>
-                    <field name="location"/>
-                    <field name="warehouse_enter_no"/>
-                    <field name="reserved_quantity"/>
-                    <field name="quantity"/>
-                    <field name="weight"/>
-                    <field name="volume"/>
-                    <field name="dimensions"/>
-                    <field name="ready_date"/>
-                    <field name="arrival_date"/>
                     <field name="your_ref"/>
-                    <field name="dest"/>
-                    <field name="awb"/>
-                    <field name="departure_date"/>
-                    <field name="ref"/>
                     <field name="lot_id" optional="hide"/>
                     <field name="package_id" optional="hide"/>
                 </search>

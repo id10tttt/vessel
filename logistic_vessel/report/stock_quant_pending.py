@@ -1,34 +1,41 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, tools, api
 from psycopg2 import sql
+import decimal
 from odoo.exceptions import UserError
+
+
+def decimal_float_number(number, rounding='0.00'):
+    decimal.getcontext().rounding = "ROUND_HALF_UP"
+    res = decimal.Decimal(str(number)).quantize(decimal.Decimal(rounding))
+    return str(res)
 
 
 class StockQuantPending(models.Model):
     _name = 'stock.quant.pending.report'
     _auto = False
-    _order = 'id desc'
+    _order = 'lot_id desc, id desc'
 
-    stock_in_order = fields.Many2one('sale.order', string='Stock IN', compute='_compute_stock_in_order_info')
+    stock_in_order = fields.Many2one('sale.order', string='Stock IN')
     stock_out_order = fields.Many2one('sale.order', string='Stock OUT', compute='_compute_stock_out_order_info')
-    supplier_id = fields.Many2one('res.partner', string='Supplier', compute='_compute_stock_in_order_info')
-    mv = fields.Many2one('freight.vessel', string='M/V', compute='_compute_stock_in_order_info')
+    supplier_id = fields.Many2one('res.partner', string='Supplier')
+    mv = fields.Many2one('freight.vessel', string='M/V')
     lot_id = fields.Many2one('stock.lot', string='Lot')
     package_id = fields.Many2one('stock.quant.package', string='Package')
-    owner_ref = fields.Char('Owner Ref', related='lot_id.name')
+    owner_ref = fields.Char('Owner Ref')
     location = fields.Char('Location', compute='_compute_stock_in_order_info')
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_stock_in_order_info')
     quantity = fields.Float('Quantity', digits='Stock Quant Decimal')
     reserved_quantity = fields.Float('Reserved Quantity', digits='Stock Quant Decimal')
-    weight = fields.Float('Weight', related='package_id.gross_weight_pc', digits='Stock Quant Weight')
-    volume = fields.Float('Volume', related='package_id.volume', digits='Vessel Quant Volume')
+    weight = fields.Float('Weight', digits='Stock Quant Weight')
+    volume = fields.Float('Volume', digits='Vessel Quant Volume')
     dimensions = fields.Char('Dimensions(LxMxH cm)', related='package_id.dimensions')
     ready_date = fields.Date('Ready Date', compute='_compute_stock_in_order_info')
     arrival_date = fields.Date('Arrival Date', compute='_compute_stock_in_order_info')
     pick_up_charge = fields.Float('Pick Up Charge', compute='_compute_stock_in_order_info', digits='Pick Up Charge')
     invoice = fields.Char('Invoice', compute='_compute_stock_in_order_info')
     packing = fields.Char('Packing List', compute='_compute_stock_in_order_info')
-    your_ref = fields.Char('Your Ref', compute='_compute_stock_in_order_info')
+    your_ref = fields.Char('Your Ref')
     dest = fields.Char('Dest', compute='_compute_stock_out_order_info')
     awb = fields.Char('Awb', compute='_compute_stock_out_order_info')
     departure_date = fields.Date('Departure Date', compute='_compute_stock_out_order_info')
@@ -36,38 +43,25 @@ class StockQuantPending(models.Model):
 
     @api.depends('owner_ref', 'lot_id', 'package_id')
     def _compute_stock_in_order_info(self):
-        sale_order_ids = self.env['sale.order'].sudo().search([
-            ('order_type', '=', 'stock_in'),
-            ('owner_ref', 'in', self.lot_id.mapped('name')),
-            ('state', '!=', 'cancel')
-        ])
         for quant_id in self:
-            order_id = sale_order_ids.filtered(lambda so: so.owner_ref == quant_id.lot_id.name)
+            order_id = quant_id.stock_in_order
             if order_id:
                 picking_ids = order_id.picking_ids
                 valid_picking_id = picking_ids.filtered(lambda p: p.state == 'done')
-                quant_id.stock_in_order = order_id[0].id
-                quant_id.supplier_id = order_id[0].partner_id.id
-                quant_id.mv = order_id[0].mv.id
                 quant_id.location = order_id[0].location_id.name
                 quant_id.warehouse_enter_no = order_id[0].warehouse_enter_no
                 quant_id.ready_date = order_id[0].date_order
                 quant_id.arrival_date = valid_picking_id[0].date_done if valid_picking_id else None
                 quant_id.invoice = order_id[0].invoice_file_url
                 quant_id.packing = order_id[0].packing_file_url
-                quant_id.your_ref = order_id[0].client_order_ref
                 quant_id.pick_up_charge = valid_picking_id[0].pick_up_charge if valid_picking_id else 0
             else:
-                quant_id.stock_in_order = None
-                quant_id.supplier_id = None
-                quant_id.mv = None
                 quant_id.location = None
                 quant_id.warehouse_enter_no = None
                 quant_id.ready_date = None
                 quant_id.arrival_date = None
                 quant_id.invoice = None
                 quant_id.packing = None
-                quant_id.your_ref = None
                 quant_id.pick_up_charge = 0
 
     @api.depends('owner_ref', 'lot_id', 'package_id')
@@ -103,14 +97,48 @@ class StockQuantPending(models.Model):
 
     def get_query(self):
         query = """
-        select sq.id                as id,
-               sq.lot_id            as lot_id,
-               sq.package_id        as package_id,
-               sq.quantity          as quantity,
-               sq.reserved_quantity as reserved_quantity
+        select sq.id                                        as id,
+               sq.lot_id                                    as lot_id,
+               sq.package_id                                as package_id,
+               so.id                                        as stock_in_order,
+               so.partner_id                                as supplier_id,
+               so.mv                                        as mv,
+               so.client_order_ref                          as your_ref,
+               cast(sqp.gross_weight_pc as decimal(18, 1))  as weight,
+               cast(sqp.volume as decimal(18, 3))           as volume,
+               cast(sq.quantity as decimal(18, 0))          as quantity,
+               sl2.name                                     as owner_ref,
+               cast(sq.reserved_quantity as decimal(18, 0)) as reserved_quantity
         from stock_quant as sq
                  join stock_location sl on sq.location_id = sl.id
+                 join stock_lot sl2 on sq.lot_id = sl2.id
+                 join stock_quant_package sqp on sq.package_id = sqp.id
+                 join sale_order so on sl2.name = so.owner_ref
         where sl.usage = 'internal'
+          and sq.package_id is not null
+          and so.state = 'sale'
+          and so.order_type = 'stock_in'
+        union
+        select sq.id                                        as id,
+               sq.lot_id                                    as lot_id,
+               sq.package_id                                as package_id,
+               so.id                                        as stock_in_order,
+               so.partner_id                                as supplier_id,
+               so.mv                                        as mv,
+               so.client_order_ref                          as your_ref,
+               0                                            as weight,
+               0                                            as volume,
+               cast(sq.quantity as decimal(18, 0))          as quantity,
+               sl2.name                                     as owner_ref,
+               cast(sq.reserved_quantity as decimal(18, 0)) as reserved_quantity
+        from stock_quant as sq
+                 join stock_location sl on sq.location_id = sl.id
+                 join stock_lot sl2 on sq.lot_id = sl2.id
+                 join sale_order so on sl2.name = so.owner_ref
+        where sl.usage = 'internal'
+          and sq.package_id is null
+          and so.state = 'sale'
+          and so.order_type = 'stock_in'
         """
         return query
 
