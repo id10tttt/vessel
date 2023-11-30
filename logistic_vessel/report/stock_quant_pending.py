@@ -51,7 +51,7 @@ class StockQuantPending(models.Model):
                 quant_id.warehouse_enter_no = order_id[0].warehouse_enter_no
                 quant_id.ready_date = order_id[0].date_order
                 quant_id.arrival_date = valid_picking_id[0].date_done if valid_picking_id else None
-                quant_id.invoice = order_id[0].invoice_url
+                quant_id.invoice = order_id[0].invoice_file_url
                 quant_id.your_ref = order_id[0].client_order_ref
             else:
                 quant_id.stock_in_order = None
