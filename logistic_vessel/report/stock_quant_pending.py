@@ -26,6 +26,7 @@ class StockQuantPending(models.Model):
     ready_date = fields.Date('Ready Date', compute='_compute_stock_in_order_info')
     arrival_date = fields.Date('Arrival Date', compute='_compute_stock_in_order_info')
     invoice = fields.Char('Invoice', compute='_compute_stock_in_order_info')
+    packing = fields.Char('Packing List', compute='_compute_stock_in_order_info')
     your_ref = fields.Char('Your Ref', compute='_compute_stock_in_order_info')
     dest = fields.Char('Dest', compute='_compute_stock_out_order_info')
     awb = fields.Char('Awb', compute='_compute_stock_out_order_info')
@@ -52,6 +53,7 @@ class StockQuantPending(models.Model):
                 quant_id.ready_date = order_id[0].date_order
                 quant_id.arrival_date = valid_picking_id[0].date_done if valid_picking_id else None
                 quant_id.invoice = order_id[0].invoice_file_url
+                quant_id.packing = order_id[0].packing_file_url
                 quant_id.your_ref = order_id[0].client_order_ref
             else:
                 quant_id.stock_in_order = None
@@ -62,6 +64,7 @@ class StockQuantPending(models.Model):
                 quant_id.ready_date = None
                 quant_id.arrival_date = None
                 quant_id.invoice = None
+                quant_id.packing = None
                 quant_id.your_ref = None
 
     @api.depends('owner_ref', 'lot_id', 'package_id')

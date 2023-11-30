@@ -24,6 +24,7 @@
                                 <field name="ready_date" readonly="1"/>
                                 <field name="arrival_date" readonly="1"/>
                                 <field name="invoice" readonly="1"/>
+                                <field name="packing" readonly="1"/>
                                 <field name="your_ref" readonly="1"/>
                                 <field name="dest" readonly="1"/>
                                 <field name="awb" readonly="1"/>
@@ -64,6 +65,7 @@
                     <field name="ready_date"/>
                     <field name="arrival_date"/>
                     <field name="invoice"/>
+                    <field name="packing" optional="hide"/>
                     <field name="your_ref"/>
                     <field name="dest"/>
                     <field name="awb"/>
@@ -93,7 +95,6 @@
                     <field name="dimensions"/>
                     <field name="ready_date"/>
                     <field name="arrival_date"/>
-                    <field name="invoice"/>
                     <field name="your_ref"/>
                     <field name="dest"/>
                     <field name="awb"/>
