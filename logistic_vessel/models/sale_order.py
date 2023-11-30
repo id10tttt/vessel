@@ -2,12 +2,16 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 import xlsxwriter
+from typing import Dict, List
 from io import BytesIO
 import hashlib
 import base64
 from odoo.tools import float_compare
 from tempfile import NamedTemporaryFile
 from odoo.tools.misc import file_path
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 SALE_ORDER_STATE = [
@@ -62,7 +66,14 @@ class SaleOrder(models.Model):
     location_id = fields.Many2one('res.country.state', string='State', tracking=True)
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_warehouse_no', store=True)
 
-    message_attachment_urls = fields.Char('Invoice Url', compute='_compute_message_attachment_urls')
+    invoice_file_url = fields.Char('Invoice Url', compute='_compute_invoice_packing_url')
+    packing_file_url = fields.Char('Packing Url', compute='_compute_invoice_packing_url')
+
+    invoice_file = fields.Binary('Invoice File', attachment=True)
+    invoice_filename = fields.Char('Invoice File Name')
+
+    packing_file = fields.Binary('Packing File', attachment=True)
+    packing_filename = fields.Char('Packing File Name')
 
     dest = fields.Char('Dest')
     awb = fields.Char('Awb')
@@ -81,6 +92,46 @@ class SaleOrder(models.Model):
         copy=False, store=False,
         compute='_compute_stock_out_state')
 
+    def create_attachment_ids(self, file_name, file_stream, field_name):
+        stream_encode = base64.b64decode(file_stream)
+        file_md5 = hashlib.md5(stream_encode)
+        attachment_data = {
+            'name': file_name,
+            'datas': file_stream,
+            'description': file_md5.hexdigest(),
+            'type': 'binary',
+            'res_field': field_name,
+            'res_model': self._name,
+            'res_id': self.id,
+            'file_size': len(stream_encode)
+        }
+        if not self.env['ir.attachment'].sudo().search([
+            ('description', '=', file_md5.hexdigest()),
+            ('res_field', '=', field_name),
+            ('res_model', '=', self._name),
+            ('res_id', '=', self.id),
+            ('name', '=', file_name),
+        ]):
+            attach_id = self.env['ir.attachment'].create(attachment_data)
+            _logger.info('创建附件: {}, {}'.format(file_name, attach_id))
+
+    def web_save(self, vals, specification: Dict[str, Dict], next_id=None) -> List[Dict]:
+        invoice_file = vals.get('invoice_file')
+        invoice_filename = vals.get('invoice_filename')
+
+        if invoice_file and invoice_filename:
+            self.create_attachment_ids(invoice_filename, invoice_file, 'invoice_file')
+            vals.pop('invoice_file')
+
+        packing_file = vals.get('packing_file')
+        packing_filename = vals.get('packing_filename')
+
+        if packing_filename and packing_file:
+            self.create_attachment_ids(packing_filename, packing_file, 'packing_file')
+            vals.pop('packing_file')
+
+        return super().web_save(vals, specification, next_id)
+
     @api.depends('state')
     def _compute_stock_out_state(self):
         for order_id in self:
@@ -91,19 +142,22 @@ class SaleOrder(models.Model):
             raise ValidationError('不允许取消')
         return super().action_cancel()
 
-    def generate_attachment_hyperlink(self, attach_ids):
-        if not attach_ids:
+    def generate_attachment_hyperlink(self, attach_id, record, file_name):
+        if not attach_id or len(attach_id) != 1:
             return ''
-        res = '&"\r\n"&'.join('HYPERLINK("{}", "{}")'.format(x.url, x.name) for x in attach_ids if x.url)
-        return '={}'.format(res)
+        return '=HYPERLINK("{}", "{}")'.format(attach_id.url, getattr(record, file_name))
 
-    def _compute_message_attachment_urls(self):
+    def _compute_invoice_packing_url(self):
         for record in self:
-            attach_ids = self.env['ir.attachment'].search([
-                ('res_id', 'in', record.ids),
-                ('res_model', '=', record._name)
+            attachment_ids = self.env['ir.attachment'].sudo().search([
+                ('res_model', '=', record._name),
+                ('res_id', '=', record.id),
+                ('res_field', 'in', ['invoice_file', 'packing_file'])
             ])
-            record.message_attachment_urls = self.generate_attachment_hyperlink(attach_ids)
+            record.invoice_file_url = self.generate_attachment_hyperlink(
+                attachment_ids.filtered(lambda f: f.res_field == 'invoice_file'), record, 'invoice_filename')
+            record.packing_file_url = self.generate_attachment_hyperlink(
+                attachment_ids.filtered(lambda f: f.res_field == 'packing_file'), record, 'packing_filename')
 
     @api.depends('owner_ref')
     def _compute_warehouse_no(self):

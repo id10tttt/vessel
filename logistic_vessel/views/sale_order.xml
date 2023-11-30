@@ -31,7 +31,8 @@
                         <field name="awb" optional="hide"/>
                         <field name="departure_date" optional="hide"/>
                         <field name="ref" optional="hide"/>
-                        <field name="message_attachment_urls" optional="hide"/>
+                        <field name="invoice_file_url" optional="hide"/>
+                        <field name="packing_file_url" optional="hide"/>
                     </tree>
                 </xpath>
             </field>
@@ -92,7 +93,13 @@
                         <field name="arrival_date" readonly="state != 'draft'" invisible="1"/>
                         <field name="warehouse_enter_no" readonly="state != 'draft'"/>
                         <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>
-                        <field name="warehouse_id" groups="base.group_no_one"/>
+                        <field name="warehouse_id"/>
+
+                        <field name="invoice_file" widget="binary" filename="invoice_filename"/>
+                        <field name="invoice_filename" invisible="1"/>
+                        <field name="packing_file" widget="binary" filename="packing_filename"/>
+                        <field name="packing_filename" invisible="1"/>
+
                         <field name="has_active_pricelist" invisible="1"/>
                         <field name="show_update_pricelist" invisible="1"/>
                         <field name="pricelist_id" invisible="1"/>

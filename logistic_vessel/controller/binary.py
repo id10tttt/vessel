@@ -56,7 +56,7 @@ class Binary(http.Controller):
             send_file_kwargs['max_age'] = http.STATIC_CACHE_LONG
         if nocache:
             send_file_kwargs['max_age'] = None
-        if field == 'delivery_note_file' and getattr(stream, 'url'):
+        if field in ['delivery_note_file', 'invoice_file', 'packing_file'] and getattr(stream, 'url'):
             download_name = filename or stream.download_name
             send_file_kwargs = {
                 'mimetype': stream.mimetype,
