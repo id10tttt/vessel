@@ -25,6 +25,7 @@ class StockQuantPending(models.Model):
     dimensions = fields.Char('Dimensions(LxMxH cm)', related='package_id.dimensions')
     ready_date = fields.Date('Ready Date', compute='_compute_stock_in_order_info')
     arrival_date = fields.Date('Arrival Date', compute='_compute_stock_in_order_info')
+    pick_up_charge = fields.Float('Pick Up Charge', compute='_compute_stock_in_order_info')
     invoice = fields.Char('Invoice', compute='_compute_stock_in_order_info')
     packing = fields.Char('Packing List', compute='_compute_stock_in_order_info')
     your_ref = fields.Char('Your Ref', compute='_compute_stock_in_order_info')
@@ -55,6 +56,7 @@ class StockQuantPending(models.Model):
                 quant_id.invoice = order_id[0].invoice_file_url
                 quant_id.packing = order_id[0].packing_file_url
                 quant_id.your_ref = order_id[0].client_order_ref
+                quant_id.pick_up_charge = valid_picking_id[0].pick_up_charge if valid_picking_id else 0
             else:
                 quant_id.stock_in_order = None
                 quant_id.supplier_id = None
@@ -66,6 +68,7 @@ class StockQuantPending(models.Model):
                 quant_id.invoice = None
                 quant_id.packing = None
                 quant_id.your_ref = None
+                quant_id.pick_up_charge = 0
 
     @api.depends('owner_ref', 'lot_id', 'package_id')
     def _compute_stock_out_order_info(self):

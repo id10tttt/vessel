@@ -23,6 +23,7 @@
                             <group>
                                 <field name="ready_date" readonly="1"/>
                                 <field name="arrival_date" readonly="1"/>
+                                <field name="pick_up_charge" readonly="1"/>
                                 <field name="invoice" readonly="1"/>
                                 <field name="packing" readonly="1"/>
                                 <field name="your_ref" readonly="1"/>
@@ -63,6 +64,7 @@
                     <field name="volume" optional="show"/>
                     <field name="dimensions" optional="show"/>
                     <field name="ready_date" optional="show"/>
+                    <field name="pick_up_charge" optional="show"/>
                     <field name="arrival_date" optional="show"/>
                     <field name="invoice" optional="show"/>
                     <field name="packing" optional="hide"/>
