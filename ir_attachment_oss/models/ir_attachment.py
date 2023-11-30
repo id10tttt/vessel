@@ -33,6 +33,8 @@ class IrAttachment(models.Model):
         oss_enable_state = self._get_oss_settings('oss.enable_oss', 'OSS_ENABLE')
         if oss_enable_state:
             for obj_id in self:
+                if not obj_id.oss_file_name:
+                    continue
                 obj_id._file_delete(obj_id.oss_file_name)
         return super().unlink()
 
