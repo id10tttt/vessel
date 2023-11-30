@@ -20,7 +20,7 @@ class StockQuantPending(models.Model):
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_stock_in_order_info')
     quantity = fields.Float('Quantity', digits='Stock Quant Decimal')
     reserved_quantity = fields.Float('Reserved Quantity', digits='Stock Quant Decimal')
-    weight = fields.Float('Weight', related='package_id.gross_weight_pc')
+    weight = fields.Float('Weight', related='package_id.gross_weight_pc', digits='Stock Quant Weight')
     volume = fields.Float('Volume', related='package_id.volume', digits='Vessel Quant Volume')
     dimensions = fields.Char('Dimensions(LxMxH cm)', related='package_id.dimensions')
     ready_date = fields.Date('Ready Date', compute='_compute_stock_in_order_info')
