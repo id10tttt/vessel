@@ -5,9 +5,17 @@
             <field name="name">Vessel Package Volume</field>
             <field name="digits" eval="4"/>
         </record>
+        <record forcecreate="True" id="decimal_package_volume_quant" model="decimal.precision">
+            <field name="name">Vessel Quant Volume</field>
+            <field name="digits" eval="3"/>
+        </record>
         <record forcecreate="True" id="decimal_pick_up_charge" model="decimal.precision">
             <field name="name">Pick Up Charge</field>
             <field name="digits" eval="1"/>
+        </record>
+        <record forcecreate="True" id="stock_quant_qty" model="decimal.precision">
+            <field name="name">Stock Quant Decimal</field>
+            <field name="digits" eval="0"/>
         </record>
     </data>
 </odoo>
