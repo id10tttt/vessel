@@ -13,7 +13,6 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
-
 SALE_ORDER_STATE = [
     ('draft', "出仓单"),
     ('sent', "已发送出仓单"),
@@ -92,7 +91,7 @@ class SaleOrder(models.Model):
         copy=False, store=False,
         compute='_compute_stock_out_state')
 
-    def create_attachment_ids(self, file_name, file_stream, field_name):
+    def create_attachment_ids(self, file_name, file_stream, field_name, res_id):
         stream_encode = base64.b64decode(file_stream)
         file_md5 = hashlib.md5(stream_encode)
         attachment_data = {
@@ -102,35 +101,60 @@ class SaleOrder(models.Model):
             'type': 'binary',
             'res_field': field_name,
             'res_model': self._name,
-            'res_id': self.id,
+            'res_id': res_id,
             'file_size': len(stream_encode)
         }
-        if not self.env['ir.attachment'].sudo().search([
-            ('description', '=', file_md5.hexdigest()),
+        exist_att_ids = self.env['ir.attachment'].search([
             ('res_field', '=', field_name),
             ('res_model', '=', self._name),
-            ('res_id', '=', self.id),
-            ('name', '=', file_name),
-        ]):
-            attach_id = self.env['ir.attachment'].create(attachment_data)
-            _logger.info('创建附件: {}, {}'.format(file_name, attach_id))
+            ('res_id', '=', res_id)
+        ])
+        # Unlink before create
+        if exist_att_ids:
+            exist_att_ids.unlink()
+        attach_id = self.env['ir.attachment'].create(attachment_data)
+        _logger.info('创建附件: {}, {}'.format(file_name, attach_id))
 
     def web_save(self, vals, specification: Dict[str, Dict], next_id=None) -> List[Dict]:
-        invoice_file = vals.get('invoice_file')
-        invoice_filename = vals.get('invoice_filename')
+        # Write
+        if self:
+            invoice_file = vals.get('invoice_file')
+            invoice_filename = vals.get('invoice_filename')
 
-        if invoice_file and invoice_filename:
-            self.create_attachment_ids(invoice_filename, invoice_file, 'invoice_file')
+            if invoice_file and invoice_filename:
+                self.create_attachment_ids(
+                    invoice_filename, invoice_file, 'invoice_file', res_id=self.id)
+                vals.pop('invoice_file')
+
+            packing_file = vals.get('packing_file')
+            packing_filename = vals.get('packing_filename')
+
+            if packing_filename and packing_file:
+                self.create_attachment_ids(
+                    packing_filename, packing_file, 'packing_file', res_id=self.id)
+                vals.pop('packing_file')
+
+            return super().web_save(vals, specification, next_id)
+        # Create
+        else:
+            invoice_file = vals.get('invoice_file')
+            invoice_filename = vals.get('invoice_filename')
+            packing_file = vals.get('packing_file')
+            packing_filename = vals.get('packing_filename')
             vals.pop('invoice_file')
-
-        packing_file = vals.get('packing_file')
-        packing_filename = vals.get('packing_filename')
-
-        if packing_filename and packing_file:
-            self.create_attachment_ids(packing_filename, packing_file, 'packing_file')
             vals.pop('packing_file')
-
-        return super().web_save(vals, specification, next_id)
+            res = super().web_save(vals, specification, next_id)
+            if invoice_file and invoice_filename:
+                self.create_attachment_ids(
+                    invoice_filename, invoice_file, 'invoice_file', res_id=res[0].get('id'))
+            if packing_filename and packing_file:
+                self.create_attachment_ids(
+                    packing_filename, packing_file, 'packing_file', res_id=res[0].get('id'))
+            res[0].update({
+                'invoice_file': invoice_file,
+                'packing_file': packing_file,
+            })
+            return res
 
     @api.depends('state')
     def _compute_stock_out_state(self):
@@ -143,17 +167,19 @@ class SaleOrder(models.Model):
         return super().action_cancel()
 
     def generate_attachment_hyperlink(self, attach_id, record, file_name):
-        if not attach_id or len(attach_id) != 1:
+        if not attach_id:
             return ''
+        attach_id = attach_id[0]
         return '=HYPERLINK("{}", "{}")'.format(attach_id.url, getattr(record, file_name))
 
+    @api.depends('invoice_file', 'packing_file', 'invoice_filename', 'packing_filename')
     def _compute_invoice_packing_url(self):
         for record in self:
             attachment_ids = self.env['ir.attachment'].sudo().search([
                 ('res_model', '=', record._name),
                 ('res_id', '=', record.id),
                 ('res_field', 'in', ['invoice_file', 'packing_file'])
-            ])
+            ], order='id desc')
             record.invoice_file_url = self.generate_attachment_hyperlink(
                 attachment_ids.filtered(lambda f: f.res_field == 'invoice_file'), record, 'invoice_filename')
             record.packing_file_url = self.generate_attachment_hyperlink(

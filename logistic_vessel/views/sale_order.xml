@@ -95,9 +95,9 @@
                         <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>
                         <field name="warehouse_id"/>
 
-                        <field name="invoice_file" widget="binary" filename="invoice_filename"/>
+                        <field name="invoice_file" filename="invoice_filename"/>
                         <field name="invoice_filename" invisible="1"/>
-                        <field name="packing_file" widget="binary" filename="packing_filename"/>
+                        <field name="packing_file" filename="packing_filename"/>
                         <field name="packing_filename" invisible="1"/>
 
                         <field name="has_active_pricelist" invisible="1"/>

@@ -29,15 +29,19 @@ class IrAttachment(models.Model):
 
     oss_file_name = fields.Char('OSS file name')
 
+    def unlink(self):
+        oss_enable_state = self._get_oss_settings('oss.enable_oss', 'OSS_ENABLE')
+        if oss_enable_state:
+            for obj_id in self:
+                obj_id._file_delete(obj_id.oss_file_name)
+        return super().unlink()
+
     def _file_delete(self, fname):
-        if not fname.startswith(BUCKET_HEADER):
-            return super(IrAttachment, self)._file_delete(fname)
-
+        _logger.info('start unlink file: {}'.format(fname))
         oss_bucket = self._get_oss_resource()
-
-        oss_bucket.delete_object(self.oss_file_name)
+        oss_bucket.delete_object(fname)
         _logger.info({
-            'oss delete': self.oss_file_name
+            'oss delete': fname
         })
 
     def _get_oss_settings(self, param_name, os_var_name):
@@ -179,13 +183,6 @@ class IrAttachment(models.Model):
         except Exception as e:
             return super()._file_read(fname)
 
-    def _file_delete(self, fname):
-        try:
-            oss_bucket = self._get_oss_resource()
-            oss_bucket.delete_object(self.fname)
-        except Exception as e:
-            return super()._file_delete(fname)
-
     def _file_write_with_bucket(self, bucket, bin_data, filename, mimetype, checksum):
         # make sure, that given bucket is s3 bucket
         if not is_oss_bucket(bucket):
@@ -215,7 +212,8 @@ class IrAttachment(models.Model):
             "db_datas": False,
             "type": "url",
             "url": url,
-            "public": True
+            "public": True,
+            "oss_file_name": fname
         }
 
     def force_storage_oss2(self):
