@@ -25,8 +25,8 @@ class StockQuantPending(models.Model):
     owner_ref = fields.Char('Owner Ref')
     location = fields.Char('Location', compute='_compute_stock_in_order_info')
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_stock_in_order_info')
-    quantity = fields.Float('Quantity', digits='Stock Quant Decimal')
-    reserved_quantity = fields.Float('Reserved Quantity', digits='Stock Quant Decimal')
+    quantity = fields.Integer('Quantity')
+    reserved_quantity = fields.Integer('Reserved Quantity')
     weight = fields.Char('Weight', compute='_compute_stock_quant_info')
     volume = fields.Char('Volume', compute='_compute_stock_quant_info')
     dimensions = fields.Char('Dimensions(LxMxH cm)', related='package_id.dimensions')
@@ -107,16 +107,16 @@ class StockQuantPending(models.Model):
 
     def get_query(self):
         query = """
-        select sq.id                as id,
-               sq.lot_id            as lot_id,
-               sq.package_id        as package_id,
-               so.id                as stock_in_order,
-               so.partner_id        as supplier_id,
-               so.mv                as mv,
-               so.client_order_ref  as your_ref,
-               sq.quantity          as quantity,
-               sl2.name             as owner_ref,
-               sq.reserved_quantity as reserved_quantity
+        select sq.id                                 as id,
+               sq.lot_id                             as lot_id,
+               sq.package_id                         as package_id,
+               so.id                                 as stock_in_order,
+               so.partner_id                         as supplier_id,
+               so.mv                                 as mv,
+               so.client_order_ref                   as your_ref,
+               cast(sq.quantity as integer)          as quantity,
+               sl2.name                              as owner_ref,
+               cast(sq.reserved_quantity as integer) as reserved_quantity
         from stock_quant as sq
                  join stock_location sl on sq.location_id = sl.id
                  join stock_lot sl2 on sq.lot_id = sl2.id
@@ -127,16 +127,16 @@ class StockQuantPending(models.Model):
           and so.state = 'sale'
           and so.order_type = 'stock_in'
         union
-        select sq.id                as id,
-               sq.lot_id            as lot_id,
-               sq.package_id        as package_id,
-               so.id                as stock_in_order,
-               so.partner_id        as supplier_id,
-               so.mv                as mv,
-               so.client_order_ref  as your_ref,
-               sq.quantity          as quantity,
-               sl2.name             as owner_ref,
-               sq.reserved_quantity as reserved_quantity
+        select sq.id                                 as id,
+               sq.lot_id                             as lot_id,
+               sq.package_id                         as package_id,
+               so.id                                 as stock_in_order,
+               so.partner_id                         as supplier_id,
+               so.mv                                 as mv,
+               so.client_order_ref                   as your_ref,
+               cast(sq.quantity as integer)          as quantity,
+               sl2.name                              as owner_ref,
+               cast(sq.reserved_quantity as integer) as reserved_quantity
         from stock_quant as sq
                  join stock_location sl on sq.location_id = sl.id
                  join stock_lot sl2 on sq.lot_id = sl2.id
