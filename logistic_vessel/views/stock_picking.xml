@@ -122,11 +122,11 @@
                            column_invisible="parent.picking_type_code == 'outgoing'"
                            groups="stock.group_stock_multi_locations" optional="hide"
                            domain="[('id', 'child_of', parent.location_dest_id), '|', ('company_id', '=', False), ('company_id', '=', company_id), ('usage', '!=', 'view')]"/>
-                    <field name="gross_weight_pc"/>
+                    <field name="gross_weight_pc" sum="total_weight"/>
                     <field name="length"/>
                     <field name="width"/>
                     <field name="height"/>
-                    <field name="volume"/>
+                    <field name="volume" sum="total_volume"/>
                     <field name="package_id" groups="stock.group_tracking_lot" column_invisible="True"/>
                     <field name="result_package_id" groups="stock.group_tracking_lot" column_invisible="True"/>
                     <field name="lots_visible" column_invisible="True"/>
@@ -134,7 +134,8 @@
                            column_invisible="parent.picking_type_code == 'incoming'"/>
                     <field name="state" column_invisible="True"/>
                     <field name="is_locked" column_invisible="True"/>
-                    <field name="quantity" readonly="state in ('done', 'cancel') and is_locked" force_save="1"/>
+                    <field name="quantity" readonly="state in ('done', 'cancel') and is_locked" force_save="1"
+                           sum="total_qty"/>
                     <field name="product_uom_id" force_save="1" readonly="state != 'draft' and id"
                            groups="uom.group_uom"/>
                 </tree>
