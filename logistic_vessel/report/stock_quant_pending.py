@@ -30,7 +30,7 @@ class StockQuantPending(models.Model):
     weight = fields.Char('Weight', compute='_compute_stock_quant_info')
     volume = fields.Char('Volume', compute='_compute_stock_quant_info')
     dimensions = fields.Char('Dimensions(LxMxH cm)', related='package_id.dimensions')
-    ready_date = fields.Date('Ready Date', compute='_compute_stock_in_order_info')
+    ready_date = fields.Date('Ready Date')
     arrival_date = fields.Date('Arrival Date', compute='_compute_stock_in_order_info')
     pick_up_charge = fields.Float('Pick Up Charge', compute='_compute_stock_in_order_info', digits='Pick Up Charge')
     invoice = fields.Char('Invoice', compute='_compute_stock_in_order_info')
@@ -60,7 +60,6 @@ class StockQuantPending(models.Model):
                 valid_picking_id = picking_ids.filtered(lambda p: p.state == 'done')
                 quant_id.location = order_id[0].location_id.name
                 quant_id.warehouse_enter_no = order_id[0].warehouse_enter_no
-                quant_id.ready_date = order_id[0].date_order
                 quant_id.arrival_date = valid_picking_id[0].date_done if valid_picking_id else None
                 quant_id.invoice = order_id[0].invoice_file_url
                 quant_id.packing = order_id[0].packing_file_url
@@ -68,7 +67,6 @@ class StockQuantPending(models.Model):
             else:
                 quant_id.location = None
                 quant_id.warehouse_enter_no = None
-                quant_id.ready_date = None
                 quant_id.arrival_date = None
                 quant_id.invoice = None
                 quant_id.packing = None
@@ -113,6 +111,7 @@ class StockQuantPending(models.Model):
                so.id                                 as stock_in_order,
                so.partner_id                         as supplier_id,
                so.mv                                 as mv,
+               so.date_order                         as ready_date,
                so.client_order_ref                   as your_ref,
                cast(sq.quantity as integer)          as quantity,
                sl2.name                              as owner_ref,
@@ -133,6 +132,7 @@ class StockQuantPending(models.Model):
                so.id                                 as stock_in_order,
                so.partner_id                         as supplier_id,
                so.mv                                 as mv,
+               so.date_order                         as ready_date,
                so.client_order_ref                   as your_ref,
                cast(sq.quantity as integer)          as quantity,
                sl2.name                              as owner_ref,
