@@ -8,7 +8,7 @@
 <!--            <field name="subject">Release: M/V {{ object.mv.name }} - {{ object.partner_id.name }} - {{ object.client_order_ref }} - Your ref. {{ object.invoice_no }}, {{ object.warehouse_enter_no }}</field>-->
             <field name="subject">{{ object.delivery_title }} //进仓单 {{ object.owner_ref }}</field>
             <field name="email_from">{{ object.create_uid.sudo().email }}</field>
-            <field name="partner_to">{{ object.create_uid.id }}</field>
+            <field name="partner_to">{{ object.email }}</field>
             <field name="email_to">{{ object.email }}</field>
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px;">
