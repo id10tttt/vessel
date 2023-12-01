@@ -10,3 +10,4 @@ from . import stock_rule
 from . import stock_quant
 from . import delivery_method
 from . import ir_attachment
+# from . import mail_thread

@@ -5,9 +5,10 @@
     "author": "1di0t",
     "category": "web",
     "license": "AGPL-3",
-    "depends": ["web", "sale", "stock", "sale_stock", "stock_account", "account"],
+    "depends": ["web", "sale", "stock", "sale_stock", "stock_account", "account", "mail"],
     "installable": True,
     'data': [
+        'data/mail_template.xml',
         'data/ir_sequence.xml',
         'data/vessel_digits.xml',
         'data/notify_template.xml',
