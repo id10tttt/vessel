@@ -25,10 +25,10 @@ class StockQuantPending(models.Model):
     owner_ref = fields.Char('Owner Ref')
     location = fields.Char('Location', compute='_compute_stock_in_order_info')
     warehouse_enter_no = fields.Char('Warehouse Enter No', compute='_compute_stock_in_order_info')
-    quantity = fields.Integer('Quantity')
-    reserved_quantity = fields.Integer('Reserved Quantity')
-    weight = fields.Char('Weight', compute='_compute_stock_quant_info')
-    volume = fields.Char('Volume', compute='_compute_stock_quant_info')
+    quantity = fields.Float('Quantity', digits='Stock Quant Decimal')
+    reserved_quantity = fields.Float('Reserved Quantity', digits='Stock Quant Decimal')
+    weight = fields.Float('Weight', digits='Stock Quant Weight')
+    volume = fields.Float('Volume', digits='Vessel Quant Volume')
     dimensions = fields.Char('Dimensions(LxMxH cm)', related='package_id.dimensions')
     ready_date = fields.Date('Ready Date')
     arrival_date = fields.Date('Arrival Date', compute='_compute_stock_in_order_info')
@@ -40,16 +40,6 @@ class StockQuantPending(models.Model):
     awb = fields.Char('Awb', compute='_compute_stock_out_order_info')
     departure_date = fields.Date('Departure Date', compute='_compute_stock_out_order_info')
     ref = fields.Char('Ref', compute='_compute_stock_out_order_info')
-
-    @api.depends('package_id')
-    def _compute_stock_quant_info(self):
-        for quant_id in self:
-            if not quant_id.package_id:
-                quant_id.weight = ''
-                quant_id.volume = ''
-            else:
-                quant_id.weight = decimal_float_number(quant_id.package_id.gross_weight_pc, '0.0')
-                quant_id.volume = decimal_float_number(quant_id.package_id.volume, '0.000')
 
     @api.depends('owner_ref', 'lot_id', 'package_id')
     def _compute_stock_in_order_info(self):
@@ -105,17 +95,19 @@ class StockQuantPending(models.Model):
 
     def get_query(self):
         query = """
-        select sq.id                                 as id,
-               sq.lot_id                             as lot_id,
-               sq.package_id                         as package_id,
-               so.id                                 as stock_in_order,
-               so.partner_id                         as supplier_id,
-               so.mv                                 as mv,
-               so.date_order                         as ready_date,
-               so.client_order_ref                   as your_ref,
-               cast(sq.quantity as integer)          as quantity,
-               sl2.name                              as owner_ref,
-               cast(sq.reserved_quantity as integer) as reserved_quantity
+        select sq.id                as id,
+               sq.lot_id            as lot_id,
+               sq.package_id        as package_id,
+               so.id                as stock_in_order,
+               so.partner_id        as supplier_id,
+               so.mv                as mv,
+               so.client_order_ref  as your_ref,
+               sq.quantity          as quantity,
+               sl2.name             as owner_ref,
+               sq.reserved_quantity as reserved_quantity,
+               sqp.gross_weight_pc  as weight,
+               sqp.volume           as volume,
+               so.date_order        as ready_date
         from stock_quant as sq
                  join stock_location sl on sq.location_id = sl.id
                  join stock_lot sl2 on sq.lot_id = sl2.id
@@ -126,17 +118,19 @@ class StockQuantPending(models.Model):
           and so.state = 'sale'
           and so.order_type = 'stock_in'
         union
-        select sq.id                                 as id,
-               sq.lot_id                             as lot_id,
-               sq.package_id                         as package_id,
-               so.id                                 as stock_in_order,
-               so.partner_id                         as supplier_id,
-               so.mv                                 as mv,
-               so.date_order                         as ready_date,
-               so.client_order_ref                   as your_ref,
-               cast(sq.quantity as integer)          as quantity,
-               sl2.name                              as owner_ref,
-               cast(sq.reserved_quantity as integer) as reserved_quantity
+        select sq.id                as id,
+               sq.lot_id            as lot_id,
+               sq.package_id        as package_id,
+               so.id                as stock_in_order,
+               so.partner_id        as supplier_id,
+               so.mv                as mv,
+               so.client_order_ref  as your_ref,
+               sq.quantity          as quantity,
+               sl2.name             as owner_ref,
+               sq.reserved_quantity as reserved_quantity,
+               0                    as weight,
+               0                    as volume,
+               so.date_order        as ready_date
         from stock_quant as sq
                  join stock_location sl on sq.location_id = sl.id
                  join stock_lot sl2 on sq.lot_id = sl2.id
