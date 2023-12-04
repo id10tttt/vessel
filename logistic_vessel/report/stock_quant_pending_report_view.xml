@@ -52,6 +52,7 @@
             <field name="model">stock.quant.pending.report</field>
             <field name="arch" type="xml">
                 <tree create="0">
+                    <field name="stock_out_order" invisible="1"/>
                     <field name="id" optional="show"/>
                     <field name="supplier_id" optional="show"/>
                     <field name="mv" optional="show"/>

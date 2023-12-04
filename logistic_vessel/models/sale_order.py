@@ -497,7 +497,7 @@ class SaleOrder(models.Model):
                 if order_line_id.product_type == 'service' or order_line_id.product_id.tracking != 'lot':
                     continue
 
-                if order_line_id.assign_package and order_line_id.package_id:
+                if order_line_id.assign_package:
                     continue
 
                 package_name = '{}#{}{}{}'.format(owner_ref_lot, order_line_id.length, order_line_id.width,
@@ -512,6 +512,12 @@ class SaleOrder(models.Model):
                 package_id = self.get_stock_quant_package_id(package_data)
                 order_line_id.package_id = package_id
 
+    def button_validate_picking_one_step_by_sale_order(self, order_ids):
+        order_ids = order_ids.filtered(lambda so: so.order_type == 'stock_out')
+        if order_ids:
+            picking_ids = order_ids.picking_ids
+            picking_ids.button_validate()
+
     def action_confirm(self):
         # 如果没有明细，生成一个缺省值
         self.action_set_default_order_line()
@@ -523,6 +529,11 @@ class SaleOrder(models.Model):
             'arrival_date': fields.Date.today()
         })
         return super().action_confirm()
+
+    def action_confirm_picking(self):
+        res = self.action_confirm()
+        self.button_validate_picking_one_step_by_sale_order(self)
+        return res
 
     def get_default_product_id(self):
         default_product_id = self.env['product.product'].sudo().search([

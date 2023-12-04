@@ -66,17 +66,12 @@ class StockQuantPending(models.Model):
     def _compute_stock_out_order_info(self):
         sale_order_ids = self.env['sale.order.line'].sudo().search([
             ('order_id.order_type', '=', 'stock_out'),
-            ('product_lot_id', 'in', self.lot_id.ids),
-            ('package_id', 'in', self.package_id.ids),
             ('order_id.state', '!=', 'cancel')
         ])
-        if not sale_order_ids:
-            sale_order_ids = self.env['sale.order.line'].sudo().search([
-                ('order_id.order_type', '=', 'stock_out'),
-                ('order_id.owner_ref', 'in', self.mapped('owner_ref')),
-                ('order_id.state', '!=', 'cancel')
-            ])
         for quant_id in self:
+            if not sale_order_ids:
+                sale_order_ids = sale_order_ids.filtered(
+                    lambda so: so.product_id == quant_id.lot_id and so.package_id == quant_id.package_id)
             order_line_id = sale_order_ids.filtered(
                 lambda sol: sol.product_lot_id == quant_id.lot_id and sol.package_id == quant_id.package_id)
             order_id = order_line_id[0].order_id if order_line_id else False
