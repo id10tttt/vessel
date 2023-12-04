@@ -64,9 +64,9 @@
                     <field name="weight" optional="show"/>
                     <field name="volume" optional="show"/>
                     <field name="dimensions" optional="show"/>
-                    <field name="pick_up_charge" optional="show"/>
                     <field name="ready_date" optional="show"/>
                     <field name="arrival_date" optional="show"/>
+                    <field name="pick_up_charge" optional="show"/>
                     <field name="invoice" optional="show"/>
                     <field name="packing" optional="hide"/>
                     <field name="dest" optional="show"/>
