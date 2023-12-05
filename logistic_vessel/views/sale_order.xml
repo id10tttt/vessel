@@ -8,10 +8,12 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="replace">
                     <tree>
+                        <field name="order_type" column_invisible="1"/>
                         <field name="name" string="单号" readonly="1" decoration-bf="1"/>
-                        <field name="partner_id" readonly="1" string="Supplier"/>
+                        <field name="partner_id" readonly="1" string="Supplier"
+                                column_invisible="context.get('default_order_type') == 'stock_out'"/>
                         <field name="mv"/>
-                        <field name="owner_ref"/>
+                        <field name="owner_ref"  column_invisible="context.get('default_order_type') == 'stock_out'"/>
                         <field name="client_order_ref"/>
                         <field name="team_id" optional="hide"/>
                         <field name="company_id" groups="base.group_multi_company" optional="show" readonly="1"/>
@@ -20,13 +22,14 @@
                         <!--                        <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1"-->
                         <!--                               optional="show"/>-->
                         <field name="currency_id" column_invisible="1"/>
-                        <field name="order_type" column_invisible="1"/>
                         <field name="date_order" column_invisible="context.get('default_order_type') != 'stock_in'"/>
-                        <field name="date_order" string="出库日期" column_invisible="context.get('default_order_type') != 'stock_out'"/>
+                        <field name="date_order" string="出库日期"
+                               column_invisible="context.get('default_order_type') != 'stock_out'"/>
                         <field name="location_id" optional="show"/>
                         <field name="warehouse_enter_no" optional="show"/>
                         <field name="state" column_invisible="context.get('default_order_type') != 'stock_in'"/>
-                        <field name="stock_out_state" column_invisible="context.get('default_order_type') != 'stock_out'"/>
+                        <field name="stock_out_state"
+                               column_invisible="context.get('default_order_type') != 'stock_out'"/>
                         <field name="dest" optional="hide"/>
                         <field name="awb" optional="hide"/>
                         <field name="departure_date" optional="hide"/>
@@ -76,11 +79,15 @@
                 <xpath expr="//group[@name='sale_total']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">order_type == 'stock_out'</attribute>
+                </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="mv" required="1" readonly="state != 'draft'"/>
                     <!--                    <field name="invoice_no" readonly="state != 'draft'"/>-->
                     <!--                    <field name="owner_id" readonly="state != 'draft'"/>-->
-                    <field name="owner_ref" required="1" readonly="state != 'draft'"/>
+                    <field name="owner_ref" required="1" readonly="state != 'draft'"
+                           invisible="order_type == 'stock_out'"/>
                     <field name="client_order_ref" readonly="state != 'draft'"/>
                     <field name="delivery_title" readonly="state != 'draft'"/>
                     <field name="email" readonly="state != 'draft'"/>
@@ -263,7 +270,8 @@
                         <field name="company_id" column_invisible="True"/>
                         <field name="hs_code" optional="hide"/>
                         <field name="declaration" optional="hide"/>
-                        <field name="supplier_id" optional="hide"/>
+                        <field name="product_lot_id" column_invisible="parent.order_type == 'stock_in'"/>
+                        <field name="supplier_id" column_invisible="parent.order_type == 'stock_in'"/>
                         <field name="assign_package" optional="hide"/>
                         <field name="assign_lot" optional="hide"/>
                     </tree>
@@ -288,6 +296,8 @@
                     <field name="warehouse_enter_no" string="Warehouse Enter No"/>
                     <field name="order_line" string="订单行产品"
                            filter_domain="[('order_line.product_id', 'ilike', self)]"/>
+                    <field name="order_line" string="订单行Supplier"
+                           filter_domain="[('order_line.supplier_id', 'ilike', self)]"/>
                     <field name="client_order_ref"/>
                     <filter string="我的订单" domain="[('user_id', '=', uid)]" name="my_sale_orders_filter"/>
                     <separator/>
