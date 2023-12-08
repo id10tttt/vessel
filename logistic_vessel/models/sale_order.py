@@ -109,9 +109,7 @@ class SaleOrder(models.Model):
     def action_attachments_download(self):
         items = self.get_order_attachment()
         if not items:
-            raise UserError(
-                _("None attachment selected. Only binary attachments allowed.")
-            )
+            raise UserError('您并没有上传附件(Invoice/Packing)，无法下载导出！')
         ids = ",".join(map(str, items.ids))
         return self.action_download_order_attach(ids)
 
