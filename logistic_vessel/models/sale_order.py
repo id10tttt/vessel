@@ -112,7 +112,8 @@ class SaleOrder(models.Model):
         }
 
     def action_attachments_download(self):
-        self.ensure_one()
+        if len(self) > 1:
+            raise UserError('请不要一次选择多个订单 !')
         items = self.get_order_attachment()
         if not items:
             raise UserError('您并没有上传附件(Invoice/Packing)，无法下载导出！')
