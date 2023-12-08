@@ -92,10 +92,15 @@ class SaleOrder(models.Model):
         compute='_compute_stock_out_state')
 
     def get_order_attachment(self):
+        # attach_ids = self.env['ir.attachment'].search([
+        #     ('res_model', '=', self._name),
+        #     ('res_id', 'in', self.ids),
+        #     ('res_field', 'in', ['invoice_file', 'packing_file'])
+        # ])
         attach_ids = self.env['ir.attachment'].search([
             ('res_model', '=', self._name),
             ('res_id', 'in', self.ids),
-            ('res_field', 'in', ['invoice_file', 'packing_file'])
+            ('res_field', '=', False)
         ])
         return attach_ids
 
@@ -107,6 +112,7 @@ class SaleOrder(models.Model):
         }
 
     def action_attachments_download(self):
+        self.ensure_one()
         items = self.get_order_attachment()
         if not items:
             raise UserError('您并没有上传附件(Invoice/Packing)，无法下载导出！')

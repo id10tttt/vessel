@@ -38,10 +38,12 @@ class IrAttachment(models.Model):
         return zip_buffer
 
     def correct_file_name(self):
-        if not all([self.res_model, self.res_id, self.res_field]):
+        if not all([self.res_model, self.res_id, not self.res_field]):
             return self.name
         record_id = self.env[self.res_model].browse(self.res_id)
-        return getattr(record_id, '{}name'.format(self.res_field)) or self.name
+        if self.res_field and hasattr(record_id, '{}name'.format(self.res_field)):
+            return getattr(record_id, '{}name'.format(self.res_field)) or self.name
+        return self.name
 
     def _compute_zip_file_name(self):
         """Give a chance of easily changing the name of the file inside the ZIP."""
