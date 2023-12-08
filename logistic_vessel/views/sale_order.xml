@@ -11,9 +11,9 @@
                         <field name="order_type" column_invisible="1"/>
                         <field name="name" string="单号" readonly="1" decoration-bf="1"/>
                         <field name="partner_id" readonly="1" string="Supplier"
-                                column_invisible="context.get('default_order_type') == 'stock_out'"/>
+                               column_invisible="context.get('default_order_type') == 'stock_out'"/>
                         <field name="mv"/>
-                        <field name="owner_ref"  column_invisible="context.get('default_order_type') == 'stock_out'"/>
+                        <field name="owner_ref" column_invisible="context.get('default_order_type') == 'stock_out'"/>
                         <field name="client_order_ref"/>
                         <field name="team_id" optional="hide"/>
                         <field name="company_id" groups="base.group_multi_company" optional="show" readonly="1"/>
@@ -348,6 +348,17 @@
                   action="logistic_sale_action_orders_stock_in"
                   parent="sale.sale_menu_root"
                   sequence="1"/>
+
+        <record id="action_order_attachments_download" model="ir.actions.server">
+            <field name="name">附件打包ZIP</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                action = records.action_attachments_download()
+            </field>
+        </record>
 
     </data>
 </odoo>

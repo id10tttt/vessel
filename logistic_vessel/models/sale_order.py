@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 import xlsxwriter
 from typing import Dict, List
 from io import BytesIO
@@ -90,6 +90,27 @@ class SaleOrder(models.Model):
         string="状态",
         copy=False, store=False,
         compute='_compute_stock_out_state')
+
+    def get_order_attachment(self):
+        attach_ids = self.env['ir.attachment'].search([
+            ('res_model', '=', self._name),
+            ('res_id', 'in', self.ids),
+            ('res_field', 'in', ['invoice_file', 'packing_file'])
+        ])
+        return attach_ids
+
+    def action_attachments_download(self):
+        items = self.get_order_attachment()
+        if not items:
+            raise UserError(
+                _("None attachment selected. Only binary attachments allowed.")
+            )
+        ids = ",".join(map(str, items.ids))
+        return {
+            "type": "ir.actions.act_url",
+            "url": "/web/attachment/download_zip?ids=%s" % (ids),
+            "target": "self",
+        }
 
     def create_attachment_ids(self, file_name, file_stream, field_name, res_id):
         stream_encode = base64.b64decode(file_stream)
