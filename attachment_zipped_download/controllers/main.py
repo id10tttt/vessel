@@ -18,3 +18,11 @@ class AttachmentZippedDownloadController(http.Controller):
         return http.Stream(
             type='data', data=out_file_bytes).get_response(mimetype="application/zip",
                                                            download_name=_("attachments.zip"))
+        # zip_http_headers = [
+        #     (
+        #         "Content-Type",
+        #         "application/zip"
+        #     ),
+        #     ("Content-Length", len(out_file_bytes)),
+        # ]
+        # return request.make_response(out_file_bytes, headers=zip_http_headers)

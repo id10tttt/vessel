@@ -99,6 +99,13 @@ class SaleOrder(models.Model):
         ])
         return attach_ids
 
+    def action_download_order_attach(self, ids):
+        return {
+            "type": "ir.actions.act_url",
+            "url": "/web/attachment/download_zip?ids=%s" % (ids),
+            "target": "new",
+        }
+
     def action_attachments_download(self):
         items = self.get_order_attachment()
         if not items:
@@ -106,11 +113,7 @@ class SaleOrder(models.Model):
                 _("None attachment selected. Only binary attachments allowed.")
             )
         ids = ",".join(map(str, items.ids))
-        return {
-            "type": "ir.actions.act_url",
-            "url": "/web/attachment/download_zip?ids=%s" % (ids),
-            "target": "self",
-        }
+        return self.action_download_order_attach(ids)
 
     def create_attachment_ids(self, file_name, file_stream, field_name, res_id):
         stream_encode = base64.b64decode(file_stream)

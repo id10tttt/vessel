@@ -46,7 +46,7 @@ class IrAttachmentActionDownloadMixin(models.AbstractModel):
 
         if len(attachments) == 1:
             return {
-                "target": "self",
+                "target": "new",
                 "type": "ir.actions.act_url",
                 "url": "/web/content/%s?download=1" % attachments.id,
             }
