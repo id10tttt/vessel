@@ -48,6 +48,7 @@ class SaleQuantOut(models.TransientModel):
                 'package_id': line_id.package_id.id,
                 'assign_package': True,
                 'assign_lot': True,
+                'pick_up_charge': line_id.pick_up_charge
             }))
         return data
 
@@ -83,6 +84,7 @@ class SaleQuantOutLine(models.TransientModel):
     package_id = fields.Many2one('stock.quant.package', string='Package')
     lot_id = fields.Many2one('stock.lot', string='Lots')
     qty = fields.Float('Qty')
+    pick_up_charge = fields.Float('Pick Up Charge', digits='Pick Up Charge', default=0.0)
     weight = fields.Float('Weight')
     volume = fields.Float('Volume')
     dimensions = fields.Char('Dimensions(LxMxH cm)')

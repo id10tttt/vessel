@@ -165,6 +165,7 @@ class StockQuantPending(models.Model):
                 'weight': quant_id.weight,
                 'volume': quant_id.volume,
                 'dimensions': quant_id.dimensions,
+                'pick_up_charge': quant_id.pick_up_charge
             }))
         if line_data:
             out_data.update({

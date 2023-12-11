@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 SALE_ORDER_STATE = [
     ('draft', "出仓单"),
     ('sent', "已发送出仓单"),
-    ('sale', "销售订单"),
+    ('sale', "已完成"),
     ('cancel', "已取消"),
 ]
 
@@ -600,6 +600,7 @@ class SaleOrderLine(models.Model):
             return False
         return default_product_id.id
 
+    pick_up_charge = fields.Float('Pick Up Charge', digits='Pick Up Charge', default=0.0)
     product_id = fields.Many2one(
         comodel_name='product.product',
         string="Product",

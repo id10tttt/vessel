@@ -32,3 +32,9 @@ msgstr "进仓单"
 #: model:ir.model.fields.selection,name:sale.selection__sale_report__state__sent
 msgid "Quotation Sent"
 msgstr "已发送进仓单"
+
+#. module: sale
+#: model:ir.model.fields.selection,name:sale.selection__sale_order__state__sale
+#: model:ir.model.fields.selection,name:sale.selection__sale_report__state__sale
+msgid "Sales Order"
+msgstr "已完成"
