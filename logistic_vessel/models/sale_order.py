@@ -588,6 +588,30 @@ class SaleOrder(models.Model):
                 'order_line': [(0, 0, data)]
             })
 
+    def update_sale_order_line_pickup_charge(self):
+        sale_order_ids = self.env['sale.order.line'].sudo().search([
+            ('order_id.order_type', '=', 'stock_in'),
+            ('order_id.state', '!=', 'cancel')
+        ])
+        for order_id in self.filtered(lambda so: so.order_type == 'stock_out'):
+            for order_line_id in order_id.order_line:
+                sol_in = sale_order_ids.filtered(
+                    lambda sol: sol.product_id == order_line_id.product_id and
+                                sol.product_lot_id == order_line_id.product_lot_id and
+                                sol.package_id == order_line_id.package_id
+                )
+                if not sol_in:
+                    sol_in = sale_order_ids.filtered(
+                        lambda sol: sol.product_id == order_line_id.product_id and
+                                    sol.product_lot_id == order_line_id.product_lot_id and
+                                    sol.order_id.owner_ref == order_line_id.product_lot_id.name
+                    )
+                if not sol_in or len(sol_in) != 1:
+                    continue
+                order_picking_ids = sol_in.order_id.picking_ids
+                order_picking_ids = order_picking_ids.filtered(lambda p: p.state == 'done')
+                order_line_id.pick_up_charge = order_picking_ids[0].pick_up_charge if order_picking_ids else 0
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

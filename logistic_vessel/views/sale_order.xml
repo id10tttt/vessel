@@ -108,9 +108,9 @@
                         <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>
                         <field name="warehouse_id"/>
 
-                        <field name="invoice_file" filename="invoice_filename"/>
+                        <field name="invoice_file" filename="invoice_filename" invisible="order_type in ('stock_out')"/>
                         <field name="invoice_filename" invisible="1"/>
-                        <field name="packing_file" filename="packing_filename"/>
+                        <field name="packing_file" filename="packing_filename" invisible="order_type in ('stock_out')"/>
                         <field name="packing_filename" invisible="1"/>
 
                         <field name="has_active_pricelist" invisible="1"/>
@@ -349,6 +349,17 @@
                   action="logistic_sale_action_orders_stock_in"
                   parent="sale.sale_menu_root"
                   sequence="1"/>
+
+        <record id="action_order_update_pickup_charge" model="ir.actions.server">
+            <field name="name">Update: Pick Up Charge</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                action = records.update_sale_order_line_pickup_charge()
+            </field>
+        </record>
 
         <record id="action_order_attachments_download" model="ir.actions.server">
             <field name="name">附件打包ZIP</field>
