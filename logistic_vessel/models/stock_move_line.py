@@ -6,9 +6,9 @@ class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
     gross_weight_pc = fields.Float('Gross Weight(KG/pc)')
-    length = fields.Float('Length(cm)', digits='Vessel Package Volume')
-    width = fields.Float('Width(cm)', digits='Vessel Package Volume')
-    height = fields.Float('Height(cm)', digits='Vessel Package Volume')
+    length = fields.Float('Length(cm)', digits='Vessel Package Volume Unit')
+    width = fields.Float('Width(cm)', digits='Vessel Package Volume Unit')
+    height = fields.Float('Height(cm)', digits='Vessel Package Volume Unit')
 
     volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True,
                           digits='Vessel Package Volume')

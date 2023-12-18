@@ -108,6 +108,8 @@
                         <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>
                         <field name="warehouse_id"/>
 
+                        <field name="customs_declaration" groups="base.group_no_one"
+                               invisible="order_type in ('stock_out')"/>
                         <field name="invoice_file" filename="invoice_filename" invisible="order_type in ('stock_out')"/>
                         <field name="invoice_filename" invisible="1"/>
                         <field name="packing_file" filename="packing_filename" invisible="order_type in ('stock_out')"/>
@@ -162,6 +164,21 @@
                                     }"
                                domain="[('sale_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
                                widget="sol_product_many2one"/>
+                        <field name="product_lot_id" string="Owner Ref"
+                               column_invisible="parent.order_type == 'stock_in'"/>
+                        <field name="product_uom_qty"
+                               sum="qty"
+                               string="Quantity"
+                               decoration-info="(not display_type and invoice_status == 'to invoice')"
+                               decoration-bf="(not display_type and invoice_status == 'to invoice')"
+                               context="{
+                                        'partner_id': parent.partner_id,
+                                        'quantity': product_uom_qty,
+                                        'pricelist': parent.pricelist_id,
+                                        'uom': product_uom,
+                                        'company_id': parent.company_id
+                                    }"
+                               readonly="is_downpayment"/>
                         <field name="gross_weight_pc" sum="weight"/>
                         <field name="length"/>
                         <field name="width"/>
@@ -193,19 +210,9 @@
                                optional="hide"
                                groups="analytic.group_analytic_accounting"
                                options="{'product_field': 'product_id', 'business_domain': 'sale_order', 'amount_field': 'price_subtotal'}"/>
-                        <field name="pick_up_charge" sum="pick_up_charge" column_invisible="parent.order_type == 'stock_in'"/>
-                        <field name="product_uom_qty"
-                               sum="qty"
-                               decoration-info="(not display_type and invoice_status == 'to invoice')"
-                               decoration-bf="(not display_type and invoice_status == 'to invoice')"
-                               context="{
-                                        'partner_id': parent.partner_id,
-                                        'quantity': product_uom_qty,
-                                        'pricelist': parent.pricelist_id,
-                                        'uom': product_uom,
-                                        'company_id': parent.company_id
-                                    }"
-                               readonly="is_downpayment"/>
+                        <field name="pick_up_charge" sum="pick_up_charge"
+                               column_invisible="parent.order_type == 'stock_in'"/>
+
                         <field column_invisible="True"
                                name="qty_delivered"
                                decoration-info="(not display_type and invoice_status == 'to invoice')"
@@ -271,7 +278,6 @@
                         <field name="company_id" column_invisible="True"/>
                         <field name="hs_code" optional="hide"/>
                         <field name="declaration" optional="hide"/>
-                        <field name="product_lot_id" string="Owner Ref" column_invisible="parent.order_type == 'stock_in'"/>
                         <field name="supplier_id" column_invisible="parent.order_type == 'stock_in'"/>
                         <field name="assign_package" optional="hide"/>
                         <field name="assign_lot" optional="hide"/>

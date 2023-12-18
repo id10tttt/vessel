@@ -9,6 +9,10 @@
             <field name="name">Vessel Quant Volume</field>
             <field name="digits" eval="3"/>
         </record>
+        <record forcecreate="True" id="decimal_package_volume_quant_unit" model="decimal.precision">
+            <field name="name">Vessel Package Volume Unit</field>
+            <field name="digits" eval="1"/>
+        </record>
         <record forcecreate="True" id="decimal_pick_up_charge" model="decimal.precision">
             <field name="name">Pick Up Charge</field>
             <field name="digits" eval="1"/>

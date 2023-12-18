@@ -85,6 +85,7 @@ class SaleOrder(models.Model):
         help="Creation date of draft/sent orders,\nConfirmation date of confirmed orders.",
         default=fields.Datetime.now)
 
+    customs_declaration = fields.Text('报关资料')
     stock_out_state = fields.Selection(
         selection=SALE_ORDER_STATE,
         string="状态",
@@ -632,11 +633,12 @@ class SaleOrderLine(models.Model):
         change_default=True, ondelete='restrict', check_company=True, index='btree_not_null',
         domain="[('sale_ok', '=', True)]")
     product_lot_id = fields.Many2one('stock.lot', string=u'批次')
-    gross_weight_pc = fields.Float('Gross Weight(KG/pc)', required=True, default='0.0')
+    gross_weight_pc = fields.Float('Gross Weight(KG/pc)', required=True, default='0.0',
+                                   digits='Vessel Package Volume Unit')
 
-    length = fields.Float('Length(cm)', required=True, default=0.0, digits='Vessel Package Volume')
-    width = fields.Float('Width(cm)', required=True, default=0.0, digits='Vessel Package Volume')
-    height = fields.Float('Height(cm)', required=True, default=0.0, digits='Vessel Package Volume')
+    length = fields.Float('Length(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
+    width = fields.Float('Width(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
+    height = fields.Float('Height(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
 
     volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True,
                           digits='Vessel Package Volume')
