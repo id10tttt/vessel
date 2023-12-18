@@ -5,7 +5,7 @@ from odoo import models, fields, api
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    gross_weight_pc = fields.Float('Gross Weight(KG/pc)')
+    gross_weight_pc = fields.Float('Gross Weight(KG/pc)', digits='Stock Quant Weight')
     length = fields.Float('Length(cm)', digits='Vessel Package Volume Unit')
     width = fields.Float('Width(cm)', digits='Vessel Package Volume Unit')
     height = fields.Float('Height(cm)', digits='Vessel Package Volume Unit')

@@ -633,8 +633,7 @@ class SaleOrderLine(models.Model):
         change_default=True, ondelete='restrict', check_company=True, index='btree_not_null',
         domain="[('sale_ok', '=', True)]")
     product_lot_id = fields.Many2one('stock.lot', string=u'批次')
-    gross_weight_pc = fields.Float('Gross Weight(KG/pc)', required=True, default='0.0',
-                                   digits='Vessel Package Volume Unit')
+    gross_weight_pc = fields.Float('Gross Weight(KG/pc)', required=True, default='0.0', digits='Stock Quant Weight')
 
     length = fields.Float('Length(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
     width = fields.Float('Width(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
