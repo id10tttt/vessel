@@ -108,8 +108,8 @@
                         <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>
                         <field name="warehouse_id"/>
 
-                        <field name="customs_declaration" groups="base.group_no_one"
-                               invisible="order_type in ('stock_out')"/>
+                        <field name="customs_declaration" invisible="order_type in ('stock_out')"/>
+                        <field name="note" invisible="order_type in ('stock_out')" string="Marks"/>
                         <field name="invoice_file" filename="invoice_filename" invisible="order_type in ('stock_out')"/>
                         <field name="invoice_filename" invisible="1"/>
                         <field name="packing_file" filename="packing_filename" invisible="order_type in ('stock_out')"/>
