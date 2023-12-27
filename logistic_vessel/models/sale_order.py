@@ -93,15 +93,12 @@ class SaleOrder(models.Model):
         compute='_compute_stock_out_state')
 
     def get_order_attachment(self):
-        # attach_ids = self.env['ir.attachment'].search([
-        #     ('res_model', '=', self._name),
-        #     ('res_id', 'in', self.ids),
-        #     ('res_field', 'in', ['invoice_file', 'packing_file'])
-        # ])
         attach_ids = self.env['ir.attachment'].search([
             ('res_model', '=', self._name),
             ('res_id', 'in', self.ids),
-            ('res_field', '=', False)
+            '|',
+            ('res_field', '=', False),
+            ('res_field', 'in', ['invoice_file', 'packing_file'])
         ])
         return attach_ids
 
