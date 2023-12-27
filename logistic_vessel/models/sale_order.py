@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 SALE_ORDER_STATE = [
     ('draft', "出仓单"),
     ('sent', "已发送出仓单"),
-    ('sale', "已完成"),
+    ('sale', "已出库"),
     ('cancel', "已取消"),
 ]
 
