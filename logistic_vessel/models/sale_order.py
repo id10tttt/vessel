@@ -632,9 +632,9 @@ class SaleOrderLine(models.Model):
     product_lot_id = fields.Many2one('stock.lot', string=u'批次')
     gross_weight_pc = fields.Float('Gross Weight(KG/pc)', required=True, default='0.0', digits='Stock Quant Weight')
 
-    length = fields.Float('Length(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
-    width = fields.Float('Width(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
-    height = fields.Float('Height(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
+    length = fields.Integer('Length(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
+    width = fields.Integer('Width(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
+    height = fields.Integer('Height(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
 
     volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True,
                           digits='Vessel Package Volume')

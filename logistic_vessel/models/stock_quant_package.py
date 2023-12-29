@@ -9,9 +9,9 @@ class StockQuantPackage(models.Model):
     ]
 
     gross_weight_pc = fields.Float('Gross Weight(KG/pc)')
-    length = fields.Float('Length(cm)', digits='Vessel Package Volume')
-    width = fields.Float('Width(cm)', digits='Vessel Package Volume')
-    height = fields.Float('Height(cm)', digits='Vessel Package Volume')
+    length = fields.Integer('Length(cm)', digits='Vessel Package Volume')
+    width = fields.Integer('Width(cm)', digits='Vessel Package Volume')
+    height = fields.Integer('Height(cm)', digits='Vessel Package Volume')
 
     volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True,
                           digits='Vessel Package Volume')
