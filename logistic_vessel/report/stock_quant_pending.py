@@ -31,7 +31,7 @@ class StockQuantPending(models.Model):
     volume = fields.Float('Volume', digits='Vessel Quant Volume')
     dimensions = fields.Char('Dimensions(LxMxH cm)', related='package_id.dimensions')
     ready_date = fields.Date('Ready Date')
-    arrival_date = fields.Date('Arrival Date', compute='_compute_stock_in_order_info')
+    arrival_date = fields.Date('Arrival Date')
     pick_up_charge = fields.Float('Pick Up Charge', compute='_compute_stock_in_order_info', digits='Pick Up Charge')
     invoice = fields.Char('Invoice', compute='_compute_stock_in_order_info')
     packing = fields.Char('Packing List', compute='_compute_stock_in_order_info')
@@ -50,14 +50,12 @@ class StockQuantPending(models.Model):
                 valid_picking_id = picking_ids.filtered(lambda p: p.state == 'done')
                 quant_id.location = order_id[0].location_id.name
                 quant_id.warehouse_enter_no = order_id[0].warehouse_enter_no
-                quant_id.arrival_date = valid_picking_id[0].date_done if valid_picking_id else None
                 quant_id.invoice = order_id[0].invoice_file_url
                 quant_id.packing = order_id[0].packing_file_url
                 quant_id.pick_up_charge = valid_picking_id[0].pick_up_charge if valid_picking_id else 0
             else:
                 quant_id.location = None
                 quant_id.warehouse_enter_no = None
-                quant_id.arrival_date = None
                 quant_id.invoice = None
                 quant_id.packing = None
                 quant_id.pick_up_charge = 0
@@ -102,7 +100,8 @@ class StockQuantPending(models.Model):
                sq.reserved_quantity as reserved_quantity,
                sqp.gross_weight_pc  as weight,
                sqp.volume           as volume,
-               so.date_order        as ready_date
+               so.date_order        as ready_date,
+               so.picking_arrival_date        as arrival_date
         from stock_quant as sq
                  join stock_location sl on sq.location_id = sl.id
                  join stock_lot sl2 on sq.lot_id = sl2.id
@@ -125,7 +124,8 @@ class StockQuantPending(models.Model):
                sq.reserved_quantity as reserved_quantity,
                0                    as weight,
                0                    as volume,
-               so.date_order        as ready_date
+               so.date_order        as ready_date,
+               so.picking_arrival_date        as arrival_date
         from stock_quant as sq
                  join stock_location sl on sq.location_id = sl.id
                  join stock_lot sl2 on sq.lot_id = sl2.id

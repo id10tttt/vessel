@@ -115,6 +115,6 @@
         </record>
 
         <menuitem id="menu_stock_quant_pending" name="Pending" action="action_view_stock_quant_pending_report"
-                  parent="stock.menu_warehouse_report" sequence="5"/>
+                  parent="stock.menu_stock_root" sequence="90"/>
     </data>
 </odoo>

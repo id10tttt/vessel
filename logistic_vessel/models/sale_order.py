@@ -92,6 +92,15 @@ class SaleOrder(models.Model):
         copy=False, store=False,
         compute='_compute_stock_out_state')
 
+    picking_arrival_date = fields.Date('Picking Arrival Date', compute='_compute_picking_arrival_date', store=True)
+
+    @api.depends('picking_ids', 'picking_ids.date_done')
+    def _compute_picking_arrival_date(self):
+        for order_id in self:
+            picking_ids = order_id.picking_ids
+            valid_picking_id = picking_ids.filtered(lambda p: p.state == 'done')
+            order_id.picking_arrival_date = valid_picking_id[0].date_done if valid_picking_id else None
+
     def get_order_attachment(self):
         attach_ids = self.env['ir.attachment'].search([
             ('res_model', '=', self._name),
@@ -632,9 +641,9 @@ class SaleOrderLine(models.Model):
     product_lot_id = fields.Many2one('stock.lot', string=u'批次')
     gross_weight_pc = fields.Float('Gross Weight(KG/pc)', required=True, default='0.0', digits='Stock Quant Weight')
 
-    length = fields.Integer('Length(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
-    width = fields.Integer('Width(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
-    height = fields.Integer('Height(cm)', required=True, default=0.0, digits='Vessel Package Volume Unit')
+    length = fields.Integer('Length(cm)', required=True, default=0)
+    width = fields.Integer('Width(cm)', required=True, default=0)
+    height = fields.Integer('Height(cm)', required=True, default=0)
 
     volume = fields.Float('Volume(m³)', compute='_compute_volume_and_dimensions', store=True,
                           digits='Vessel Package Volume')
