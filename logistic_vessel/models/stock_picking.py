@@ -37,6 +37,18 @@ class StockPicking(models.Model):
     departure_date = fields.Date('Departure Date')
     ref = fields.Char('Ref')
 
+    total_weight = fields.Float('总重量', digits='Stock Quant Weight', compute='_compute_total_value')
+    total_volume = fields.Float('总体积', digits='Vessel Package Volume', compute='_compute_total_value')
+    total_qty = fields.Integer('总重量', compute='_compute_total_value')
+
+    @api.depends('move_line_ids_without_package', 'move_line_ids_without_package.volume',
+                 'move_line_ids_without_package.gross_weight_pc')
+    def _compute_total_value(self):
+        for picking_id in self:
+            picking_id.total_weight = sum(x.gross_weight_pc for x in picking_id.move_line_ids_without_package)
+            picking_id.total_volume = sum(x.volume for x in picking_id.move_line_ids_without_package)
+            picking_id.total_qty = int(sum(x.quantity for x in picking_id.move_line_ids_without_package))
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
