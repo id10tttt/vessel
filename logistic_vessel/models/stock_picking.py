@@ -36,6 +36,7 @@ class StockPicking(models.Model):
     awb = fields.Char('Awb')
     departure_date = fields.Date('Departure Date')
     ref = fields.Char('Ref')
+    res_state_id = fields.Many2one('res.country.state', string='State', tracking=True)
 
     total_weight = fields.Float('总重量', digits='Stock Quant Weight', compute='_compute_total_value')
     total_volume = fields.Float('总体积', digits='Vessel Package Volume', compute='_compute_total_value')
