@@ -39,7 +39,7 @@ class StockPicking(models.Model):
 
     total_weight = fields.Float('总重量', digits='Stock Quant Weight', compute='_compute_total_value')
     total_volume = fields.Float('总体积', digits='Vessel Package Volume', compute='_compute_total_value')
-    total_qty = fields.Integer('总重量', compute='_compute_total_value')
+    total_qty = fields.Integer('总数量', compute='_compute_total_value')
 
     @api.depends('move_line_ids_without_package', 'move_line_ids_without_package.volume',
                  'move_line_ids_without_package.gross_weight_pc')
