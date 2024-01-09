@@ -14,7 +14,7 @@ def decimal_float_number(number, rounding='0.00'):
 class StockQuantPending(models.Model):
     _name = 'stock.quant.pending.report'
     _auto = False
-    _order = 'lot_id desc, id desc'
+    _order = 'arrival_date desc, lot_id desc, id desc'
 
     stock_in_order = fields.Many2one('sale.order', string='Stock IN')
     stock_out_order = fields.Many2one('sale.order', string='Stock OUT', compute='_compute_stock_out_order_info')
