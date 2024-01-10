@@ -21,7 +21,8 @@ class StockMoveLine(models.Model):
                 package_id.length,
                 package_id.width,
                 package_id.height)
-            package_id.volume = (package_id.length * package_id.width * package_id.height) / (100 * 100 * 100)
+            package_id.volume = (package_id.quantity * package_id.length * package_id.width * package_id.height) / (
+                        100 * 100 * 100)
 
     @api.onchange('length', 'width', 'height')
     def _onchange_set_default_product_info(self):

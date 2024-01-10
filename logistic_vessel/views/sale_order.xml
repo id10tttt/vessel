@@ -25,7 +25,7 @@
                         <field name="date_order" column_invisible="context.get('default_order_type') != 'stock_in'"/>
                         <field name="date_order" string="出库日期"
                                column_invisible="context.get('default_order_type') != 'stock_out'"/>
-                        <field name="location_id" optional="show"/>
+<!--                        <field name="location_id" optional="show"/>-->
                         <field name="warehouse_enter_no" optional="show"/>
                         <field name="state" column_invisible="context.get('default_order_type') != 'stock_in'"/>
                         <field name="stock_out_state"
@@ -91,7 +91,7 @@
                     <field name="client_order_ref" readonly="state != 'draft'"/>
                     <field name="delivery_title" readonly="state != 'draft'"/>
                     <field name="email" readonly="state != 'draft'" invisible="order_type in ('stock_out')"/>
-                    <field name="location_id" readonly="state != 'draft'" invisible="order_type in ('stock_out')"/>
+<!--                    <field name="location_id" readonly="state != 'draft'" invisible="order_type in ('stock_out')"/>-->
                     <field name="order_type" invisible="1"/>
                     <field name="dest" invisible="order_type in ('stock_in')"/>
                     <field name="awb" invisible="order_type in ('stock_in')"/>
