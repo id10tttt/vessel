@@ -94,6 +94,18 @@ class SaleOrder(models.Model):
 
     picking_arrival_date = fields.Date('Picking Arrival Date', compute='_compute_picking_arrival_date', store=True)
 
+    total_weight = fields.Float('总重量', digits='Stock Quant Weight', compute='_compute_total_value')
+    total_volume = fields.Float('总体积', digits='Vessel Package Volume', compute='_compute_total_value')
+    total_qty = fields.Integer('总数量', compute='_compute_total_value')
+
+    @api.depends('order_line', 'order_line.volume',
+                 'order_line.gross_weight_pc')
+    def _compute_total_value(self):
+        for order_id in self:
+            order_id.total_weight = sum(x.gross_weight_pc for x in order_id.order_line)
+            order_id.total_volume = sum(x.volume for x in order_id.order_line)
+            order_id.total_qty = int(sum(x.product_uom_qty for x in order_id.order_line))
+
     @api.depends('picking_ids', 'picking_ids.date_done')
     def _compute_picking_arrival_date(self):
         for order_id in self:

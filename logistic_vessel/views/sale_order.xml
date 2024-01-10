@@ -127,6 +127,9 @@
                         <field name="tax_calculation_rounding_method" invisible="1"/>
                         <field name="payment_term_id" options="{'no_open': True, 'no_create': True}" invisible="1"/>
                         <!--                        <field name="method_id" readonly="state in ['cancel', 'sale']"/>-->
+                        <field name="total_weight" invisible="order_type in ('stock_in')"/>
+                        <field name="total_volume" invisible="order_type in ('stock_in')"/>
+                        <field name="total_qty" invisible="order_type in ('stock_in')"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='date_order']" position="replace">
@@ -167,7 +170,6 @@
                         <field name="product_lot_id" string="Owner Ref"
                                column_invisible="parent.order_type == 'stock_in'"/>
                         <field name="product_uom_qty"
-                               sum="qty"
                                string="Quantity"
                                decoration-info="(not display_type and invoice_status == 'to invoice')"
                                decoration-bf="(not display_type and invoice_status == 'to invoice')"
@@ -179,11 +181,11 @@
                                         'company_id': parent.company_id
                                     }"
                                readonly="is_downpayment"/>
-                        <field name="gross_weight_pc" sum="weight"/>
+                        <field name="gross_weight_pc"/>
                         <field name="length"/>
                         <field name="width"/>
                         <field name="height"/>
-                        <field name="volume" sum="volume"/>
+                        <field name="volume"/>
                         <field name="dimensions"/>
                         <field name="product_template_id"
                                string="Product"

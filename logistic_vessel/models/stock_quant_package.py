@@ -24,4 +24,6 @@ class StockQuantPackage(models.Model):
                 package_id.length,
                 package_id.width,
                 package_id.height)
-            package_id.volume = (package_id.length * package_id.width * package_id.height) / (100 * 100 * 100)
+            package_id.volume = (sum(
+                q.quantity for q in package_id.quant_ids) * package_id.length * package_id.width * package_id.height
+                                 ) / (100 * 100 * 100)
