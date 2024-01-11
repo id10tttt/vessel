@@ -173,6 +173,7 @@
                                string="Quantity"
                                decoration-info="(not display_type and invoice_status == 'to invoice')"
                                decoration-bf="(not display_type and invoice_status == 'to invoice')"
+                               sum="qty" digits="[16,0]"
                                context="{
                                         'partner_id': parent.partner_id,
                                         'quantity': product_uom_qty,
@@ -181,11 +182,11 @@
                                         'company_id': parent.company_id
                                     }"
                                readonly="is_downpayment"/>
-                        <field name="gross_weight_pc"/>
+                        <field name="gross_weight_pc" sum="weight" digits="[16,1]"/>
                         <field name="length"/>
                         <field name="width"/>
                         <field name="height"/>
-                        <field name="volume"/>
+                        <field name="volume" sum="volume" digits="[16,3]"/>
                         <field name="dimensions"/>
                         <field name="product_template_id"
                                string="Product"
@@ -212,7 +213,7 @@
                                optional="hide"
                                groups="analytic.group_analytic_accounting"
                                options="{'product_field': 'product_id', 'business_domain': 'sale_order', 'amount_field': 'price_subtotal'}"/>
-                        <field name="pick_up_charge" sum="pick_up_charge"
+                        <field name="pick_up_charge" sum="pick_up_charge" digits="[16,1]"
                                column_invisible="parent.order_type == 'stock_in'"/>
 
                         <field column_invisible="True"

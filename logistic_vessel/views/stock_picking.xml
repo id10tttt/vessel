@@ -128,8 +128,9 @@
                            column_invisible="parent.picking_type_code == 'outgoing'"
                            groups="stock.group_stock_multi_locations" optional="hide"
                            domain="[('id', 'child_of', parent.location_dest_id), '|', ('company_id', '=', False), ('company_id', '=', company_id), ('usage', '!=', 'view')]"/>
-                    <field name="quantity" readonly="state in ('done', 'cancel') and is_locked" force_save="1"/>
-                    <field name="gross_weight_pc" digits="[16,1]"/>
+                    <field name="quantity" readonly="state in ('done', 'cancel') and is_locked" force_save="1"
+                           sum="weight" digits="[16,0]"/>
+                    <field name="gross_weight_pc" sum="weight" digits="[16,1]"/>
                     <field name="length"/>
                     <field name="width"/>
                     <field name="height"/>

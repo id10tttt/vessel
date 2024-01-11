@@ -60,8 +60,8 @@
                     <field name="your_ref" optional="show"/>
                     <field name="location" optional="show"/>
                     <field name="warehouse_enter_no" optional="show"/>
-                    <field name="reserved_quantity" sum="reserved_qty" optional="show"/>
-                    <field name="quantity" sum="qty"/>
+                    <field name="reserved_quantity" sum="reserved_qty" optional="show" digits="[16,0]"/>
+                    <field name="quantity" sum="qty" digits="[16,0]"/>
                     <field name="weight" optional="show"/>
                     <field name="volume" optional="show"/>
                     <field name="dimensions" optional="show"/>
