@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <menuitem id="menu_res_country" name="Country" parent="sale.menu_sale_config"
+                  action="base.action_country" sequence="90"/>
+
+        <record id="view_country_state_search" model="ir.ui.view">
+            <field name="name">res.country.state.search</field>
+            <field name="model">res.country.state</field>
+            <field name="arch" type="xml">
+                <search string="Country">
+                    <field name="name"/>
+                    <field name="country_id"/>
+                    <filter string="中国" domain="[('country_id.code', '=', 'CN')]"
+                            name="filter_country_cn"/>
+                    <group string="Group By">
+                        <filter name="groupby_country" string="Country" context="{'group_by': 'country_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_country_state" model="ir.actions.act_window">
+            <field name="name">States</field>
+            <field name="res_model">res.country.state</field>
+            <field name="view_id" ref="base.view_country_state_tree"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a State
+                </p><p>
+                    Federal States belong to countries and are part of your contacts' addresses.
+                </p>
+            </field>
+            <field name="search_view_id" ref="view_country_state_search" />
+            <field name="context">{
+                'search_default_filter_country_cn': 1
+                }</field>
+        </record>
+
+        <menuitem id="menu_res_country_state" name="State" parent="sale.menu_sale_config"
+                  action="action_country_state" sequence="91"/>
+    </data>
+</odoo>

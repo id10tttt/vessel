@@ -24,6 +24,7 @@
         'views/stock_move.xml',
         'views/hide_menu.xml',
         'views/delivery_method.xml',
+        'views/res_country_menu.xml',
         'report/stock_quant_pending_report_view.xml',
         'wizard/stock_quant_stock_out_wizard.xml',
     ],
