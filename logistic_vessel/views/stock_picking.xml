@@ -129,11 +129,11 @@
                            groups="stock.group_stock_multi_locations" optional="hide"
                            domain="[('id', 'child_of', parent.location_dest_id), '|', ('company_id', '=', False), ('company_id', '=', company_id), ('usage', '!=', 'view')]"/>
                     <field name="quantity" readonly="state in ('done', 'cancel') and is_locked" force_save="1"/>
-                    <field name="gross_weight_pc"/>
+                    <field name="gross_weight_pc" digits="[16,1]"/>
                     <field name="length"/>
                     <field name="width"/>
                     <field name="height"/>
-                    <field name="volume"/>
+                    <field name="volume" sum="1" digits="[16,3]"/>
                     <field name="package_id" groups="stock.group_tracking_lot" column_invisible="True"/>
                     <field name="result_package_id" groups="stock.group_tracking_lot" column_invisible="True"/>
                     <field name="lots_visible" column_invisible="True"/>
