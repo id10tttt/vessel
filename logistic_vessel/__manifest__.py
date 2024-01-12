@@ -5,7 +5,8 @@
     "author": "1di0t",
     "category": "web",
     "license": "AGPL-3",
-    "depends": ["web", "sale", "stock", "sale_stock", "stock_account", "account", "mail", "attachment_zipped_download"],
+    "depends": ["web", "sale", "stock", "sale_stock", "stock_account", "account", "mail", "attachment_zipped_download",
+                "base_address_extended"],
     "installable": True,
     'data': [
         'data/mail_template.xml',

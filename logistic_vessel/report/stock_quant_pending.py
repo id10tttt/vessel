@@ -48,7 +48,7 @@ class StockQuantPending(models.Model):
             if order_id:
                 picking_ids = order_id.picking_ids
                 valid_picking_id = picking_ids.filtered(lambda p: p.state == 'done')
-                quant_id.location = order_id[0].location_id.name
+                quant_id.location = valid_picking_id[0].res_city_id.name if valid_picking_id else None
                 quant_id.warehouse_enter_no = order_id[0].warehouse_enter_no
                 quant_id.invoice = order_id[0].invoice_file_url
                 quant_id.packing = order_id[0].packing_file_url

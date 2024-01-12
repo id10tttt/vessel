@@ -43,7 +43,8 @@
                     <field name="warehouse_enter_no"/>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="after">
-                    <field name="res_state_id"/>
+<!--                    <field name="res_state_id"/>-->
+                    <field name="res_city_id"/>
                     <field name="pick_up_charge"/>
                     <field name="method_id"/>
                 </xpath>

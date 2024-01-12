@@ -39,5 +39,8 @@
 
         <menuitem id="menu_res_country_state" name="State" parent="sale.menu_sale_config"
                   action="action_country_state" sequence="91"/>
+
+        <menuitem id="menu_res_country_city" name="City" parent="sale.menu_sale_config"
+                  action="base_address_extended.action_res_city_tree" sequence="92"/>
     </data>
 </odoo>
