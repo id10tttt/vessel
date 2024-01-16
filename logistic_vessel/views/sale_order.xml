@@ -46,6 +46,11 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_view_delivery']/field[@name='delivery_count']" position="replace">
+                    <field name="order_type" invisible="1"/>
+                    <field name="delivery_count" widget="statinfo" string="收货" invisible="order_type in ('stock_out')"/>
+                    <field name="delivery_count" widget="statinfo" string="出货" invisible="order_type in ('stock_in')"/>
+                </xpath>
                 <xpath expr="//header/button[@name='%(sale.action_view_sale_advance_payment_inv)d']"
                        position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -88,8 +93,8 @@
                     <!--                    <field name="owner_id" readonly="state != 'draft'"/>-->
                     <field name="owner_ref" required="1" readonly="state != 'draft'"
                            invisible="order_type == 'stock_out'"/>
-                    <field name="client_order_ref" readonly="state != 'draft'"/>
-                    <field name="delivery_title" readonly="state != 'draft'"/>
+                    <field name="client_order_ref" readonly="state != 'draft'" invisible="order_type in ('stock_out')"/>
+                    <field name="delivery_title" readonly="state != 'draft'" invisible="order_type in ('stock_out')"/>
                     <field name="email" readonly="state != 'draft'" invisible="order_type in ('stock_out')"/>
 <!--                    <field name="location_id" readonly="state != 'draft'" invisible="order_type in ('stock_out')"/>-->
                     <field name="order_type" invisible="1"/>
@@ -104,7 +109,7 @@
 
                         <field name="date_order" readonly="state in ['cancel', 'sale']"/>
                         <field name="arrival_date" readonly="state != 'draft'" invisible="1"/>
-                        <field name="warehouse_enter_no" readonly="state != 'draft'"/>
+                        <field name="warehouse_enter_no" readonly="state != 'draft'" invisible="order_type in ('stock_out')"/>
                         <field name="order_type" groups="base.group_no_one" readonly="state != 'draft'"/>
                         <field name="warehouse_id" invisible="1"/>
 
